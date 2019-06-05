@@ -1,11 +1,5 @@
 import pandas as pd  
 import numpy as np  
-import matplotlib.pyplot as plt  
-import seaborn as seabornInstance 
-from sklearn.model_selection import train_test_split 
-from sklearn.linear_model import LinearRegression
-from sklearn import metrics
-#%matplotlib inline
 from datetime import datetime
 
 year = [0]*50; month = [12]*12
@@ -30,7 +24,7 @@ for k in range(600):
     date[k] = datetime.strptime(bd[k], '%Y%m')
     date[k] = date[k].strftime('%Y-%m-%d')
 
-df = pd.read_csv('1kmlev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1kmlev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
 
 alt = ['']*36
 for ia in range(36): alt[ia] = str(ia)+'km'
