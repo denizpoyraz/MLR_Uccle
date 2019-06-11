@@ -100,6 +100,9 @@ for i in range(36):
     uY[i] = uct[i][alt[i]].values
     uX[i] = predictors_with_seasons.values
 
+    print(i, len(uX[i]), len(uY[i]) )
+
+
     regression_output[i] = mzm_regression(uX[i], uY[i])
     param_list[i] = dict(zip(list(predictors_with_seasons), regression_output[i]['gls_results'].params))
     error_list[i] = dict(zip(list(predictors_with_seasons), regression_output[i]['gls_results'].bse))
@@ -107,8 +110,9 @@ for i in range(36):
     ut[i] = uct[i].index
     ptitle = str(alt[i])
     pname = pre_name + tag + str(alt[i])
+    if(i == 24): print(i, len(ut[i]), len(uY[i]), len(regression_output[i]))
 
-    plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
+    #plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
 
     trend_pre[i] =  param_list[i]['linear_pre']
     trend_pre_err[i] =  error_list[i]['linear_pre']
@@ -117,23 +121,23 @@ for i in range(36):
 
 
 
-plt.close('all')
-
-fig, ax = plt.subplots()
-plt.title('Uccle Lotus Regression Trends')
-plt.xlabel('Ozone Trend (%)')
-plt.ylabel('Altitude (km)')
-plt.xlim(-2,2)
-ax.axvline(x=0, color='grey', linestyle='--')
-
-
-ax.errorbar(trend_pre, mY, xerr= trend_pre_err, label='pre-1997', color='black', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
-ax.errorbar(trend_post, mY, xerr= trend_post_err, label='post-2000', color='green', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
-ax.legend(loc='upper right', frameon=True, fontsize='small')
-
-
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/v2/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/v2/' + plname + '.eps')
-plt.close()
+# plt.close('all')
+#
+# fig, ax = plt.subplots()
+# plt.title('Uccle Lotus Regression Trends')
+# plt.xlabel('Ozone Trend (%)')
+# plt.ylabel('Altitude (km)')
+# plt.xlim(-2,2)
+# ax.axvline(x=0, color='grey', linestyle='--')
+#
+#
+# ax.errorbar(trend_pre, mY, xerr= trend_pre_err, label='pre-1997', color='black', linewidth=1,
+#             elinewidth=0.5, capsize=1, capthick=0.5)
+# ax.errorbar(trend_post, mY, xerr= trend_post_err, label='post-2000', color='green', linewidth=1,
+#             elinewidth=0.5, capsize=1, capthick=0.5)
+# ax.legend(loc='upper right', frameon=True, fontsize='small')
+#
+#
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/v2/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/v2/' + plname + '.eps')
+# plt.close()
