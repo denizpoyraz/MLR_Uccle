@@ -25,8 +25,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
+    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
+    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
     plt.close()
 
 
@@ -40,7 +40,7 @@ plname = 'Trend_' + pre_name
 tag = ''
 
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_divided.csv')
+uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -81,10 +81,14 @@ for i in range(36):
     alt[i] = str(i) + 'km'
 
     uc[i] = uccle
+    # ucm neede to calculate the monthly means, >0 is neded to eliminate -9999 values
     ucm[i] = uccle[uccle[alt[i]]>0]
     #uc[alt[i]] = uccle[alt[i]]
 
     uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
+
+    # uct_pre[i] = ucm[i].loc['1977-02-01':'1996-12-01']
+    # uct_post[i] = ucm[i].loc['2000-02-01':'2017-06-01']
 
     uct_pre[i] = ucm[i].loc['1977-02-01':'1996-12-01']
     uct_post[i] = ucm[i].loc['2000-02-01':'2017-06-01']
@@ -121,10 +125,10 @@ for i in range(36):
 
     # for % in decade
 
-    trend_pre[i] = trend_pre[i] * 10 / mean_pre[i] *100
-    trend_pre_err[i] = 2 * trend_pre_err[i] * 10 / mean_pre[i] * 100
-    trend_post[i] = trend_post[i] * 10 / mean_post[i] *100
-    trend_post_err[i] = 2 * trend_post_err[i] * 10 / mean_post[i] * 100
+    trend_pre[i] = trend_pre[i] * 100
+    trend_pre_err[i] = 2 * trend_pre_err[i] * 100
+    trend_post[i] = trend_post[i] * 100
+    trend_post_err[i] = 2 * trend_post_err[i] *100
 
     # trend_pre[i] = trend_pre[i] * 100 / (mean_pre[i] * 10)
     # trend_pre_err[i] = 2 * trend_pre_err[i] * 100 / (mean_pre[i] * 10)
@@ -146,8 +150,8 @@ ax.errorbar(trend_post, mY, xerr=trend_post_err, label='post-2000', color='green
             elinewidth=0.5, capsize=1, capthick=0.5)
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-plname = plname + "_decade3"
+plname = plname + "times100"
 
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
+plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
+plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
 plt.close()

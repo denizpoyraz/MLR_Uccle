@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 import statistics
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
+uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean.csv')
 
 uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -133,57 +133,57 @@ for ir2 in range(36):  # per each km
     # uct[ir] = uc[ir]
     for i2 in (uct2[ir2][alt[ir2]].index):
         #
-        # if (pd.Timestamp(i2).month == 1):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jan_mean[ir2]
-        # if (pd.Timestamp(i2).month == 2):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - feb_mean[ir2]
-        # if (pd.Timestamp(i2).month == 3):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - mar_mean[ir2]
-        # if (pd.Timestamp(i2).month == 4):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - apr_mean[ir2]
-        # if (pd.Timestamp(i2).month == 5):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - may_mean[ir2]
-        # if (pd.Timestamp(i2).month == 6):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jun_mean[ir2]
-        # if (pd.Timestamp(i2).month == 7):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jul_mean[ir2]
-        # if (pd.Timestamp(i2).month == 8):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - aug_mean[ir2]
-        # if (pd.Timestamp(i2).month == 9):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - sep_mean[ir2]
-        # if (pd.Timestamp(i2).month == 10):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - oct_mean[ir2]
-        # if (pd.Timestamp(i2).month == 11):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - nov_mean[ir2]
-        # if (pd.Timestamp(i2).month == 12):
-        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2]
         if (pd.Timestamp(i2).month == 1):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jan_mean[ir2])/jan_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jan_mean[ir2]
         if (pd.Timestamp(i2).month == 2):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - feb_mean[ir2])/feb_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - feb_mean[ir2]
         if (pd.Timestamp(i2).month == 3):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - mar_mean[ir2])/mar_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - mar_mean[ir2]
         if (pd.Timestamp(i2).month == 4):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - apr_mean[ir2])/apr_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - apr_mean[ir2]
         if (pd.Timestamp(i2).month == 5):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - may_mean[ir2])/may_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - may_mean[ir2]
         if (pd.Timestamp(i2).month == 6):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jun_mean[ir2])/jun_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jun_mean[ir2]
         if (pd.Timestamp(i2).month == 7):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jul_mean[ir2])/jul_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jul_mean[ir2]
         if (pd.Timestamp(i2).month == 8):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - aug_mean[ir2])/aug_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - aug_mean[ir2]
         if (pd.Timestamp(i2).month == 9):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - sep_mean[ir2])/sep_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - sep_mean[ir2]
         if (pd.Timestamp(i2).month == 10):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - oct_mean[ir2])/oct_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - oct_mean[ir2]
         if (pd.Timestamp(i2).month == 11):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - nov_mean[ir2])/nov_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - nov_mean[ir2]
         if (pd.Timestamp(i2).month == 12):
-            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2])/dec_mean[ir2]
+            uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2]
+        # if (pd.Timestamp(i2).month == 1):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jan_mean[ir2])/jan_mean[ir2]
+        # if (pd.Timestamp(i2).month == 2):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - feb_mean[ir2])/feb_mean[ir2]
+        # if (pd.Timestamp(i2).month == 3):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - mar_mean[ir2])/mar_mean[ir2]
+        # if (pd.Timestamp(i2).month == 4):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - apr_mean[ir2])/apr_mean[ir2]
+        # if (pd.Timestamp(i2).month == 5):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - may_mean[ir2])/may_mean[ir2]
+        # if (pd.Timestamp(i2).month == 6):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jun_mean[ir2])/jun_mean[ir2]
+        # if (pd.Timestamp(i2).month == 7):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jul_mean[ir2])/jul_mean[ir2]
+        # if (pd.Timestamp(i2).month == 8):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - aug_mean[ir2])/aug_mean[ir2]
+        # if (pd.Timestamp(i2).month == 9):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - sep_mean[ir2])/sep_mean[ir2]
+        # if (pd.Timestamp(i2).month == 10):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - oct_mean[ir2])/oct_mean[ir2]
+        # if (pd.Timestamp(i2).month == 11):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - nov_mean[ir2])/nov_mean[ir2]
+        # if (pd.Timestamp(i2).month == 12):
+        #     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2])/dec_mean[ir2]
 
     dfde[alt2[ir2]] = uct2[ir2][alt[ir2]]
 
 all = pd.concat([uccle, dfde], axis=1, sort=False)
-all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_divided.csv')
+all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
 
