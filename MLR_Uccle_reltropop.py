@@ -25,8 +25,11 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
+
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
     plt.close()
 
 
@@ -42,8 +45,9 @@ tag = ''
 
 predictors_with_seasons = add_seasonal_components(predictors, {'pre_const': 4, 'post_const':4, 'gap_cons':4})
 
+#uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
 
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean.csv', index_col=0)
 
 alt = [''] * 36
 uc = {}
@@ -73,10 +77,13 @@ mY = []
 mean_pre = [0]*36
 mean_post = [0]*36
 
+for irt in range(24,-12,-1):
+    alt[24-irt] = str(irt) + 'km' #w.r.t. tropopause
+    mY.append(irt)
+
+
 
 for i in range(36):
-    mY.append(i)
-    alt[i] = str(i) + 'km'
     uc[i] = uccle[uccle[alt[i]] > 0]
 
     uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
@@ -125,9 +132,11 @@ plt.close('all')
 fig, ax = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
 plt.xlabel('Ozone Trend (%)')
-plt.ylabel('Altitude (km)')
+plt.ylabel('Altitude relative to the tropopause (km)')
 plt.xlim(-2,2)
 ax.axvline(x=0, color='grey', linestyle='--')
+ax.axhline(y=0, color='grey', linestyle=':')
+
 
 
 ax.errorbar(trend_pre, mY, xerr= trend_pre_err, label='pre-1997', color='black', linewidth=1,
@@ -137,8 +146,12 @@ ax.errorbar(trend_post, mY, xerr= trend_post_err, label='post-2000', color='gree
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
+
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
+
 plt.close()
 
 plt.close('all')
@@ -146,9 +159,11 @@ plt.close('all')
 fig, axr = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
 plt.xlabel('Ozone Trend (%)')
-plt.ylabel('Altitude (km)')
+plt.ylabel('Altitude relative to the tropopause (km)')
 plt.xlim(-20,20)
 axr.axvline(x=0, color='grey', linestyle='--')
+axr.axhline(y=0, color='grey', linestyle=':')
+
 
 
 axr.errorbar(trend_pre_rel, mY, xerr= trend_pre_err_rel, label='pre-1997', color='black', linewidth=1,
@@ -158,6 +173,10 @@ axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-2000', co
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "_rel"
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
+
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
+
 plt.close()

@@ -25,8 +25,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.eps')
     plt.close()
 
 
@@ -43,40 +43,40 @@ tag = ''
 predictors_with_seasons = add_seasonal_components(predictors, {'pre_const': 4, 'post_const':4, 'gap_cons':4})
 
 
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean.csv', index_col=0)
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_plev_relative.csv', index_col=0)
 
-alt = [''] * 36
+alt = [''] * 14
 uc = {}
 uct = {}
 uct_pre = {}
 uct_post = {}
 
-regression_output = [0] * 36
-uX = [0] * 36
-uY = [0] * 36
-param_list = [0] * 36
-error_list = [0] * 36
-ut = [0]*36
+regression_output = [0] * 14
+uX = [0] * 14
+uY = [0] * 14
+param_list = [0] * 14
+error_list = [0] * 14
+ut = [0]* 14
 
-trend_pre = [0]*36
-trend_pre_err = [0]*36
-trend_post = [0]*36
-trend_post_err = [0]*36
+trend_pre = [0]* 14
+trend_pre_err = [0]* 14
+trend_post = [0]* 14
+trend_post_err = [0]* 14
 
-trend_pre_rel = [0]*36
-trend_pre_err_rel = [0]*36
-trend_post_rel = [0]*36
-trend_post_err_rel = [0]*36
+trend_pre_rel = [0]* 14
+trend_pre_err_rel = [0]* 14
+trend_post_rel = [0]* 14
+trend_post_err_rel = [0]* 14
 
-mY = []
-
-mean_pre = [0]*36
-mean_post = [0]*36
+mY = [925, 850, 700, 500, 400, 300, 250, 200, 150, 100, 50, 30, 20,10]
 
 
-for i in range(36):
-    mY.append(i)
-    alt[i] = str(i) + 'km'
+mean_pre = [0]* 14
+mean_post = [0]* 14
+
+
+for i in range(14):
+    alt[i] = str(mY[i]) + 'hPa'
     uc[i] = uccle[uccle[alt[i]] > 0]
 
     uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
@@ -125,9 +125,13 @@ plt.close('all')
 fig, ax = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
 plt.xlabel('Ozone Trend (%)')
-plt.ylabel('Altitude (km)')
+plt.ylabel('Pair (hPa)')
 plt.xlim(-2,2)
+plt.ylim(1000,5)
 ax.axvline(x=0, color='grey', linestyle='--')
+ax.axhline(y=0, color='grey', linestyle=':')
+ax.set_yscale('log')
+
 
 
 ax.errorbar(trend_pre, mY, xerr= trend_pre_err, label='pre-1997', color='black', linewidth=1,
@@ -137,8 +141,8 @@ ax.errorbar(trend_post, mY, xerr= trend_post_err, label='post-2000', color='gree
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.eps')
 plt.close()
 
 plt.close('all')
@@ -146,9 +150,15 @@ plt.close('all')
 fig, axr = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
 plt.xlabel('Ozone Trend (%)')
-plt.ylabel('Altitude (km)')
+plt.ylabel('Pair (hPa)')
 plt.xlim(-20,20)
+plt.ylim(1000,5)
+
 axr.axvline(x=0, color='grey', linestyle='--')
+axr.axhline(y=0, color='grey', linestyle=':')
+axr.set_yscale('log')
+
+
 
 
 axr.errorbar(trend_pre_rel, mY, xerr= trend_pre_err_rel, label='pre-1997', color='black', linewidth=1,
@@ -158,6 +168,6 @@ axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-2000', co
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "_rel"
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_plev/' + plname + '.eps')
 plt.close()

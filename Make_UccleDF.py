@@ -25,11 +25,39 @@ for k in range(600):
     date[k] = date[k].strftime('%Y-%m-%d')
 
 df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1kmlev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df_rel = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1kmlev_reltropop_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df_pre = pd.read_csv('/home/poyraden/MLR_Uccle/Files/plev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+
 
 alt = ['']*36
-for ia in range(36): alt[ia] = str(ia)+'km'
+alt_rel = ['']*36
+
+plev = [925, 850, 700, 500, 400, 300, 250, 200, 150, 100, 50, 30, 20,10]
+pre = ['']*14
+
+for ia in range(36):
+    alt[ia] = str(ia)+'km'
+
+for ir in range(24,-12,-1):
+    alt_rel[24-ir] = str(ir)+'km' #w.r.t. tropopause
+    #print(ir, alt_rel[24-ir])
+
+for p in range(14):
+    pre[p] = str(plev[p])+'hPa'
+
 
 dfT = df.T
 dfT.columns = alt
 
-dfT.to_csv('/home/poyraden/MLR_Uccle/1km_monthlymean.csv')
+dfT.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
+
+
+dfT_rel = df_rel.T
+dfT_rel.columns = alt_rel
+
+dfT_rel.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
+
+dfT_pre = df_pre.T
+dfT_pre.columns = pre
+
+dfT_pre.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_plev.csv')

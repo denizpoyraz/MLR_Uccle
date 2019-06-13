@@ -96,6 +96,7 @@ for i in range(36):
     predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
 
     uY[i] = uct[i][alt_ds[i]].values
+
     mean_pre[i] = np.nanmean(uct_pre[i][alt[i]].values)
     mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
 

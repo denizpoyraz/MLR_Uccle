@@ -4,11 +4,8 @@ from datetime import datetime
 import statistics
 import sys
 
-# if sys.argv[1] == 'home': uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean.csv')
-# if sys.argv[1] == 'kmi': uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
-
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_plev.csv')
 
 
 #uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean.csv')
@@ -17,45 +14,50 @@ uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 
+plev = [925, 850, 700, 500, 400, 300, 250, 200, 150, 100, 50, 30, 20,10]
+
+
 uc = {}
 uct = {}
 uct2 = {}
 
-alt = [''] * 36
+alt = [''] * 14
 
-jan = [[0] * 50] * 36;
-feb = [[0] * 50] * 36;
-mar = [[0] * 50] * 36;
-apr = [[0] * 50] * 36;
-may = [[0] * 50] * 36;
-jun = [[0] * 50] * 36;
-jul = [[0] * 50] * 36;
-aug = [[0] * 50] * 36;
-sep = [[0] * 50] * 36;
-oct = [[0] * 50] * 36;
-nov = [[0] * 50] * 36;
-dec = [[0] * 50] * 36
+jan = [[0] * 50] * 14;
+feb = [[0] * 50] * 14;
+mar = [[0] * 50] * 14;
+apr = [[0] * 50] * 14;
+may = [[0] * 50] * 14;
+jun = [[0] * 50] * 14;
+jul = [[0] * 50] * 14;
+aug = [[0] * 50] * 14;
+sep = [[0] * 50] * 14;
+oct = [[0] * 50] * 14;
+nov = [[0] * 50] * 14;
+dec = [[0] * 50] * 14
 
-jan_mean = [0] * 36;
-feb_mean = [0] * 36;
-mar_mean = [0] * 36;
-apr_mean = [0] * 36;
-may_mean = [0] * 36;
-jun_mean = [0] * 36;
-jul_mean = [0] * 36;
-aug_mean = [0] * 36;
-sep_mean = [0] * 36;
-oct_mean = [0] * 36;
-nov_mean = [0] * 36;
-dec_mean = [[0] * 50] * 36
+jan_mean = [0] * 14;
+feb_mean = [0] * 14;
+mar_mean = [0] * 14;
+apr_mean = [0] * 14;
+may_mean = [0] * 14;
+jun_mean = [0] * 14;
+jul_mean = [0] * 14;
+aug_mean = [0] * 14;
+sep_mean = [0] * 14;
+oct_mean = [0] * 14;
+nov_mean = [0] * 14;
+dec_mean = [[0] * 50] * 14
 
-for ir in range(36):  # per each km
-    alt[ir] = str(ir) + 'km'
+for ir in range(14):  # per each km
+    alt[ir] = str(plev[ir]) + 'hPa'
     uc[ir] = uccle[uccle[alt[ir]] > 0]
     uct[ir] = uc[ir]
+
     # v2
     # uc[ir][alt[ir]] = uccle[uccle[alt[ir]] > 0]
     # uct[ir] = uc[ir]
+
     jan[ir].clear();
     feb[ir].clear();
     mar[ir].clear();
@@ -126,13 +128,12 @@ print(jan_mean[0])
 print(jan_mean[1])
 
 dfde = pd.DataFrame()
-alt2 = [''] * 36
+alt2 = [''] * 14
 
 # now subtract the monthly means from each year and the corresponding month
 
-for ir2 in range(36):  # per each km
-    alt[ir2] = str(ir2) + 'km'
-    alt2[ir2] = str(ir2) + 'km_ds'
+for ir2 in range(14):  # per each km
+    alt2[ir2] = str(plev[ir2]) + 'hPa_ds'
 
     uct2[ir2] = uccle[uccle[alt[ir2]] > 0]
     # or uct[ir] = uc[ir].loc['1987-02-01':'2017-06-01']
@@ -193,7 +194,4 @@ for ir2 in range(36):  # per each km
 all = pd.concat([uccle, dfde], axis=1, sort=False)
 #all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
 
-# if sys.argv[1] == 'home': all.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-# if sys.argv[1] == 'kmi': all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-
-all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_plev_relative.csv')
