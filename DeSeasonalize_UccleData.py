@@ -17,6 +17,9 @@ uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 
+#uccle = uccle.loc['1969-01-01':'1971-01-01']
+
+
 uc = {}
 uct = {}
 uct2 = {}
@@ -47,15 +50,14 @@ aug_mean = [0] * 36;
 sep_mean = [0] * 36;
 oct_mean = [0] * 36;
 nov_mean = [0] * 36;
-dec_mean = [[0] * 50] * 36
+dec_mean = [0] * 36
 
 for ir in range(36):  # per each km
     alt[ir] = str(ir) + 'km'
     uc[ir] = uccle[uccle[alt[ir]] > 0]
     uct[ir] = uc[ir]
-    # v2
-    # uc[ir][alt[ir]] = uccle[uccle[alt[ir]] > 0]
-    # uct[ir] = uc[ir]
+    #uct[ir] = uccle
+
     jan[ir].clear();
     feb[ir].clear();
     mar[ir].clear();
@@ -135,6 +137,8 @@ for ir2 in range(36):  # per each km
     alt2[ir2] = str(ir2) + 'km_ds'
 
     uct2[ir2] = uccle[uccle[alt[ir2]] > 0]
+    #uct2[ir2] = uccle
+
     # or uct[ir] = uc[ir].loc['1987-02-01':'2017-06-01']
     # uct[ir] = uc[ir]
     for i2 in (uct2[ir2][alt[ir2]].index):
@@ -188,12 +192,20 @@ for ir2 in range(36):  # per each km
         if (pd.Timestamp(i2).month == 12):
             uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2])/dec_mean[ir2]
 
+
+    #print('wh', ir2, alt[ir2],'uct',uct[ir2][alt[ir2]],'uct2',uct2[ir2][alt[ir2]])
+
     dfde[alt2[ir2]] = uct2[ir2][alt[ir2]]
 
-all = pd.concat([uccle, dfde], axis=1, sort=False)
-#all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
+print('end')
+
+#print(dfde['35km_ds'])
+
+
+#all = pd.concat([uccle, dfde], axis=1, sort=False)
+#all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_deseas.csv')
 
 # if sys.argv[1] == 'home': all.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 # if sys.argv[1] == 'kmi': all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 
-all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+dfde.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_deas_relative.csv')
