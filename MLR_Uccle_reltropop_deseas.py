@@ -88,8 +88,8 @@ for irt in range(24,-12,-1):
 for i in range(36):
     uc[i] = uccle
 
-    uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
-    uct_post[i] = uc[i].loc['2000-02-01':'2017-06-01']
+    # uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
+    # uct_post[i] = uc[i].loc['2000-02-01':'2017-06-01']
 
 
     uct[i] = uc[i].loc['1977-02-01':'2017-06-01']

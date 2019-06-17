@@ -25,22 +25,26 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+    plt.close()
     plt.close()
 
 
 ######################################################################################################################
 
-predictors = load_data('pred_baseline_ilt.csv')
-# predictors = load_data('pred_baseline_pwlt.csv')
+#predictors = load_data('pred_baseline_ilt.csv')
+predictors = load_data('pred_baseline_pwlt.csv')
 
-pre_name = 'Baseline_ilt'
+pre_name = 'Baseline_pwlt'
 plname = 'Trend_' + pre_name
 tag = ''
 
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+#uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -82,7 +86,7 @@ for i in range(36):
 
     uc[i] = uccle
     # ucm neede to calculate the monthly means, >0 is neded to eliminate -9999 values
-    ucm[i] = uccle[uccle[alt[i]]>0]
+    # ucm[i] = uccle[uccle[alt[i]]>0]
     #uc[alt[i]] = uccle[alt[i]]
 
     uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
@@ -90,17 +94,12 @@ for i in range(36):
     # uct_pre[i] = ucm[i].loc['1977-02-01':'1996-12-01']
     # uct_post[i] = ucm[i].loc['2000-02-01':'2017-06-01']
 
-    uct_pre[i] = ucm[i].loc['1977-02-01':'1996-12-01']
-    uct_post[i] = ucm[i].loc['2000-02-01':'2017-06-01']
-
     predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
 
     uY[i] = uct[i][alt_ds[i]].values
 
-    mean_pre[i] = np.nanmean(uct_pre[i][alt[i]].values)
-    mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
-
-    #print('pre', mean_pre[i], 'post', mean_post[i])
+    # mean_pre[i] = np.nanmean(uct_pre[i][alt[i]].values)
+    # mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
 
     uX[i] = predictors.values
 
@@ -124,13 +123,15 @@ for i in range(36):
     print('pre', trend_pre[i], 'post', trend_post[i])
 
 
-    # for % in decade
+    # for % in decade for relative montly anamoly
 
     trend_pre[i] = trend_pre[i] * 100
     trend_pre_err[i] = 2 * trend_pre_err[i] * 100
     trend_post[i] = trend_post[i] * 100
     trend_post_err[i] = 2 * trend_post_err[i] *100
 
+
+# for monthly anamoly
     # trend_pre[i] = trend_pre[i] * 100 / (mean_pre[i] * 10)
     # trend_pre_err[i] = 2 * trend_pre_err[i] * 100 / (mean_pre[i] * 10)
     # trend_post[i] = trend_post[i] * 100 / (mean_post[i] * 10)
@@ -153,6 +154,8 @@ ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "times100"
 
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/deseas_div/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()

@@ -4,8 +4,6 @@ from datetime import datetime
 import statistics
 import sys
 
-# if sys.argv[1] == 'home': uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
-# if sys.argv[1] == 'kmi': uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
 uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
 
 
@@ -55,12 +53,9 @@ for irt in range(24,-12,-1):
     print(irt, alt2[24-irt])
 
 for ir in range(36):  # per each km
+
     uc[ir] = uccle[uccle[alt[ir]] > 0]
     uct[ir] = uc[ir]
-
-    # v2
-    # uc[ir][alt[ir]] = uccle[uccle[alt[ir]] > 0]
-    # uct[ir] = uc[ir]
 
     jan[ir].clear();
     feb[ir].clear();
@@ -77,7 +72,7 @@ for ir in range(36):  # per each km
 
     for i in (uct[ir][alt[ir]].index):
 
-        if (pd.Timestamp(i).month == 1):
+        if pd.Timestamp(i).month == 1:
             # print('hey',alt[ir],  i, (uct[ir][alt[ir]].loc[pd.Timestamp(i)]))
             jan[ir].append(uct[ir][alt[ir]].loc[pd.Timestamp(i)])
             jan[ir] = list(filter(lambda a: a != 0, jan[ir]))
@@ -135,8 +130,8 @@ dfde = pd.DataFrame()
 
 # now subtract the monthly means from each year and the corresponding month
 
-for ir2 in range(36,0,-1):  # per each km
-    ir2 = 36-ir2
+for ir2 in range(35,-1,-1):  # per each km
+    #ir2 = 36-ir2
     uct2[ir2] = uccle[uccle[alt[ir2]] > 0]
     # or uct[ir] = uc[ir].loc['1987-02-01':'2017-06-01']
     # uct[ir] = uc[ir]
@@ -193,26 +188,11 @@ for ir2 in range(36,0,-1):  # per each km
         if (pd.Timestamp(i2).month == 12):
             uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = (uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2])/dec_mean[ir2]
 
-        # if (np.isnan(uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)]) == False):
-        #     print(type(i2), alt2[ir2], pd.Timestamp(i2), uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)])
-
-        #if(pd.Timestamp(i2) == pd.Timestamp('1969-01-01 00:00:00')):print('heyhey', i2, alt2[ir2], pd.Timestamp(i2), uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)])
-
-        #dfde.loc[pd.Timestamp(i2)][alt2[ir2]] =  uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)]
-
-    #print('wh', ir2, alt[ir2],'uct',uct[ir2][alt[ir2]],'uct2',uct2[ir2][alt[ir2]])
-    ##dfde[alt2[ir2]] = uct2[ir2][alt[ir2]]
-
     dfde[alt2[ir2]] = uct2[ir2][alt[ir2]]
-
 
 print('end')
 
-
 #all = pd.concat([uccle, dfde], axis=1, sort=False)
-
 #all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
-# if sys.argv[1] == 'home': all.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv')
-# if sys.argv[1] == 'kmi': all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv')
 
 dfde.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')

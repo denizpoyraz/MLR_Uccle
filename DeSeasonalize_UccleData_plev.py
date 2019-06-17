@@ -54,10 +54,6 @@ for ir in range(14):  # per each km
     uc[ir] = uccle[uccle[alt[ir]] > 0]
     uct[ir] = uc[ir]
 
-    # v2
-    # uc[ir][alt[ir]] = uccle[uccle[alt[ir]] > 0]
-    # uct[ir] = uc[ir]
-
     jan[ir].clear();
     feb[ir].clear();
     mar[ir].clear();
