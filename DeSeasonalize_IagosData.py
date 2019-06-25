@@ -184,4 +184,4 @@ for ir2 in range(12):  # per each km
 
 print('end')
 
-dfde.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas_relative.csv')
+dfde.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas.csv')
