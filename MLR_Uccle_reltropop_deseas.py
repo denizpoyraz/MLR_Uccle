@@ -28,19 +28,27 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
     plt.close()
 
 
 ######################################################################################################################
 
-predictors = load_data('pred_baseline_ilt.csv')
-#predictors = load_data('pred_baseline_pwlt.csv')
+# predictors = load_data('pred_baseline_ilt.csv')
+# #predictors = load_data('pred_baseline_pwlt.csv')
+# pre_name = 'Baseline_ilt'
+# plname = 'Trend_' + pre_name
+# tag = ''
 
-pre_name = 'Baseline_ilt'
+# part for using extended predictors
+pre_name = 'Baseline_ilt_extended'
 plname = 'Trend_' + pre_name
 tag = ''
+predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+predictors.set_index('date', inplace=True)
 
 
 #uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
@@ -92,8 +100,8 @@ for i in range(36):
     # uct_post[i] = uc[i].loc['2000-02-01':'2017-06-01']
 
 
-    uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
-    #uct[i] = uc[i].loc['1985-02-01': '2017-06-01']
+    #uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
+    uct[i] = uc[i]
 
     predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
 
@@ -149,11 +157,11 @@ for i in range(36):
 # ax.legend(loc='upper right', frameon=True, fontsize='small')
 #
 #
-# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.pdf')
-# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.eps')
+# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.pdf')
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.eps')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
 # plt.close()
 
@@ -161,7 +169,7 @@ plt.close('all')
 
 fig, axr = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
-plt.xlabel('Ozone Trend (%)')
+plt.xlabel('Ozone Trend (%/dec)')
 plt.ylabel('Altitude relative to the tropopause (km)')
 plt.xlim(-20,20)
 axr.axvline(x=0, color='grey', linestyle='--')
@@ -176,10 +184,10 @@ axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-2000', co
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "_rel"
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.pdf')
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop_deseas/' + plname + '.eps')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 
 plt.close()

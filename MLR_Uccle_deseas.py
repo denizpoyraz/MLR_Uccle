@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import statsmodels as sm
 from datetime import datetime
 from scipy import stats
+from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar
 
 
 def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
@@ -27,29 +28,45 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.eps')
     plt.close()
     plt.close()
 
 
 ######################################################################################################################
 
-#predictors = load_data('pred_baseline_ilt.csv')
-predictors = load_data('pred_baseline_pwlt.csv')
+# these are pwlt predictors from 1977
+# predictors = load_data('pred_baseline_ilt.csv')
+# pre_name = 'Baseline_pwlt'
+# plname = 'Trend_' + pre_name
+# tag = ''
 
-pre_name = 'Baseline_pwlt'
+# part for using extended predictors
+pre_name = 'Baseline_ilt_extended'
 plname = 'Trend_' + pre_name
 tag = ''
+predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-#uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+predictors.set_index('date', inplace=True)
 
+# For DeBilt
+predictors = predictors.loc['1992-11-01':'2018-12-01']
+
+
+#uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+print(list(uccle))
+#dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
 
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
-uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
+#uccle['date'] =  dates
+pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 
+print(list(uccle))
 alt = [''] * 36
 alt_ds = [''] * 36
 
@@ -89,7 +106,8 @@ for i in range(36):
     # ucm[i] = uccle[uccle[alt[i]]>0]
     #uc[alt[i]] = uccle[alt[i]]
 
-    uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
+    #uct[i] = uc[i].loc['1992-11-15':'20178-12-15']
+    uct[i] = uc[i]
 
     # uct_pre[i] = ucm[i].loc['1977-02-01':'1996-12-01']
     # uct_post[i] = ucm[i].loc['2000-02-01':'2017-06-01']
@@ -141,7 +159,7 @@ plt.close('all')
 
 fig, ax = plt.subplots()
 plt.title('Uccle Lotus Regression Trends')
-plt.xlabel('Ozone Trend (%)')
+plt.xlabel('Ozone Trend (%/dec)')
 plt.ylabel('Altitude (km)')
 plt.xlim(-20, 20)
 ax.axvline(x=0, color='grey', linestyle='--')
@@ -152,10 +170,9 @@ ax.errorbar(trend_post, mY, xerr=trend_post_err, label='post-2000', color='green
             elinewidth=0.5, capsize=1, capthick=0.5)
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-plname = plname + "times100"
 
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.eps')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()
