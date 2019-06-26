@@ -29,7 +29,7 @@ def load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-0
     # num_months = ((end_year - start_year)/np.timedelta64(1, 'M'))
     #print('num months', num_months)
 
-    index = pd.date_range('1969-01', periods=num_months, freq='M').to_period(freq='M')
+    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
 
     pre_delta = -1 * (index.to_timestamp() - pd.to_datetime(pre_trend_end)).values
     post_delta = (index.to_timestamp() - pd.to_datetime(post_trend_start)).values
@@ -92,13 +92,13 @@ def load_enso(lag_months=0):
     # data = pd.read_table('https://www.esrl.noaa.gov/psd/enso/mei/data/meiv2.data', skiprows=1, skipfooter=4, sep='\s+',
     #                     index_col=0, engine='python', header=None)
 
-    data = pd.read_table('/home/poyraden/MLR_Uccle/Files/enso_mei.dat', skiprows=1, sep='\s+',index_col=0,
+    data = pd.read_table('/Volumes/HD3/KMI/MLR_Uccle/Files/enso_mei.dat', skiprows=1, sep='\s+',index_col=0,
                          engine='python', header=None)
 
     assert (data.index[0] == 1969)
     data = data.stack()
     data = data[data > -998]
-    data.index = pd.date_range(start='1969', periods=len(data), freq='M').to_period()
+    data.index = pd.date_range(start='1969-01-01', periods=len(data), freq='M').to_period()
 
     data = data.shift(lag_months)
 
@@ -185,13 +185,13 @@ def load_solar():
 # now make the dataframe for predictors
 
 linear_trends = load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
-print('linear trend', list(linear_trends))
+# print('linear trend', list(linear_trends))
 enso = load_enso(lag_months= 0 )
-print('enso', type(enso), list(enso))
+# print('enso', type(enso), list(enso))
 solar = load_solar()
-print('solar', type(solar),list(solar))
+# print('solar', type(solar),list(solar))
 QBO = load_qbo(pca = 2)
-print('QBO', list(QBO))
+# print('QBO', list(QBO))
 
 ext_predictor = pd.DataFrame()
 
@@ -215,6 +215,6 @@ predictors_uccle['solar'] = norsolar
 
 
 
-predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors_uccle.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
 
 

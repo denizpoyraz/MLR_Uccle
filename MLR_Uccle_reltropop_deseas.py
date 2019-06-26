@@ -1,9 +1,8 @@
 from typing import List, Any
 
 from LOTUS_regression.regression import mzm_regression
-from LOTUS_regression.predictors import load_data
-from LOTUS_regression.predictors.seasonal import add_seasonal_components
-import LOTUS_regression.tests as tests
+from matplotlib.ticker import AutoMinorLocator
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,8 +27,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
     plt.close()
 
 
@@ -45,14 +44,14 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 pre_name = 'Baseline_ilt_extended'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 
 #uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
 
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -124,7 +123,7 @@ for i in range(36):
     pname = pre_name + tag + str(alt[i])
     if(i == 24): print(i, len(ut[i]), len(uY[i]), len(regression_output[i]))
 
-    plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
+    #plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
 
     # trend_pre[i] =  param_list[i]['linear_pre']
     # trend_pre_err[i] =  error_list[i]['linear_pre']
@@ -160,32 +159,43 @@ for i in range(36):
 # # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
 # # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
 # plt.close()
 
 plt.close('all')
 
 fig, axr = plt.subplots()
-plt.title('Uccle Lotus Regression Trends')
-plt.xlabel('Ozone Trend (%/dec)')
-plt.ylabel('Altitude relative to the tropopause (km)')
-plt.xlim(-20,20)
+plt.title('Uccle 1969-2018')
+plt.xlabel('Ozone Trend [%/dec]')
+plt.ylabel('Altitude relative to the tropopause [km]')
+plt.xlim(-10,10)
 axr.axvline(x=0, color='grey', linestyle='--')
 axr.axhline(y=0, color='grey', linestyle=':')
 
+axr.tick_params(axis='both', which='both', direction='in')
+axr.yaxis.set_ticks_position('both')
+axr.xaxis.set_ticks_position('both')
+axr.yaxis.set_minor_locator(AutoMinorLocator(5))
+axr.xaxis.set_minor_locator(AutoMinorLocator(5))
+axr.set_xticks([-10,-5,0,5,10])
 
 
-axr.errorbar(trend_pre_rel, mY, xerr= trend_pre_err_rel, label='pre-1997', color='black', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
-axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-2000', color='green', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
+
+eb1 = axr.errorbar(trend_pre_rel, mY, xerr= trend_pre_err_rel, label='pre-1997', color='red', linewidth=1,
+            elinewidth=0.5, capsize=1.5, capthick=1)
+eb1[-1][0].set_linestyle('--')
+
+eb2 = axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-2000', color='limegreen', linewidth=1,
+            elinewidth=0.5, capsize=1.5, capthick=1)
+eb2[-1][0].set_linestyle('--')
+
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "_rel"
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.pdf')
+plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.eps')
 
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')

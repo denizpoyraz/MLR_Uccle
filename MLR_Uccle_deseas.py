@@ -7,6 +7,8 @@ import LOTUS_regression.tests as tests
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
+
 import statsmodels as sm
 from datetime import datetime
 from scipy import stats
@@ -28,8 +30,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.eps')
+    plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/' + plname + '.pdf')
+    plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/' + plname + '.eps')
     plt.close()
     plt.close()
 
@@ -46,18 +48,18 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 pre_name = 'Baseline_ilt_extended'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/Extended_ilt.csv')
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 # For DeBilt
-predictors = predictors.loc['1992-11-01':'2018-12-01']
+# predictors = predictors.loc['1992-11-01':'2018-12-01']
 
 
-#uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+# uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 print(list(uccle))
 #dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
 
@@ -131,7 +133,7 @@ for i in range(36):
 
     if (i == 24): print(i, len(ut[i]), len(uY[i]), len(regression_output[i]))
 
-    plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
+    #plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
 
     trend_pre[i] = param_list[i]['linear_pre']
     trend_pre_err[i] = error_list[i]['linear_pre']
@@ -158,21 +160,33 @@ for i in range(36):
 plt.close('all')
 
 fig, ax = plt.subplots()
-plt.title('Uccle Lotus Regression Trends')
-plt.xlabel('Ozone Trend (%/dec)')
-plt.ylabel('Altitude (km)')
-plt.xlim(-20, 20)
+plt.title('Uccle 1969-2018')
+plt.xlabel('Ozone trend [%/dec]')
+plt.ylabel('Altitude [km]')
+plt.xlim(-10, 10)
+plt.ylim(0,32)
 ax.axvline(x=0, color='grey', linestyle='--')
 
-ax.errorbar(trend_pre, mY, xerr=trend_pre_err, label='pre-1997', color='black', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
-ax.errorbar(trend_post, mY, xerr=trend_post_err, label='post-2000', color='green', linewidth=1,
-            elinewidth=0.5, capsize=1, capthick=0.5)
+ax.tick_params(axis='both', which='both', direction='in')
+ax.yaxis.set_ticks_position('both')
+ax.xaxis.set_ticks_position('both')
+ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+ax.set_xticks([-10,-5,0,5,10])
+
+
+eb1 = ax.errorbar(trend_pre, mY, xerr=trend_pre_err, label='pre-1997', color='red', linewidth=1,
+            elinewidth=0.5, capsize=1.5, capthick=1)
+eb1[-1][0].set_linestyle('--')
+eb2 = ax.errorbar(trend_post, mY, xerr=trend_post_err, label='post-2000', color='limegreen', linewidth=1,
+            elinewidth=0.5, capsize=1.5, capthick=1)
+eb2[-1][0].set_linestyle('--')
+
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/DeBilt_Extended_Deseas/' + plname + '.eps')
+plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.pdf')
+plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.eps')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()
