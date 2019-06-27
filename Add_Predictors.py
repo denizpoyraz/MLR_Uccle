@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import astropy.time
+from datetime import datetime
+
 
 import requests
 from io import StringIO
@@ -12,7 +14,7 @@ from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load
 #   #   #   #   #   #
 
 columnStr = ['jdate', 'pressure', 'pressure_ano']
-tropop = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/newProxies/tropop.txt', header = None, sep = "\s *",
+tropop = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/tropop.txt', header = None, sep = "\s *",
                      engine="python", names=columnStr)
 
 julian_dates = tropop['jdate'].tolist()
@@ -41,7 +43,7 @@ tropop = tropop.drop(columns={'jdate','pressure', 'pressure_ano'})
 #   #   #   #   #   #
 
 columnStr = ['jdate', 'temp', 'ano']
-tempsur = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/newProxies/tempsurf.txt', header = None, sep = "\s *",
+tempsur = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/tempsurf.txt', header = None, sep = "\s *",
                      engine="python", names=columnStr)
 
 julian_dates = tempsur['jdate'].tolist()
@@ -62,22 +64,25 @@ pd.to_datetime(tempsur['date'], format='%Y-%m')
 tempsur.set_index('date', inplace=True)
 
 tempsur['temp_nor'] = (tempsur.temp - np.nanmean(tempsur.temp))/np.nanstd(tempsur.temp)
-tempsur['tempano_nor'] = (tempsur.ano - np.nanmean(tempsur.ano))/np.nanstd(tempsur.ano)
+# tempsur['tempano_nor'] = (tempsur.ano - np.nanmean(tempsur.ano))/np.nanstd(tempsur.ano)
+tempsur = tempsur.drop(columns={'jdate','temp', 'ano'})
+
 
 #   #   #   #   #   #
 # AO 2018
 #   #   #   #   #   #
 
 columnStr = ['year', 'month', 'day','ao']
-ao = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/newProxies/AO2018.txt', header = None, sep = "\s *",
+ao = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/AO2018.txt', header = None, sep = "\s *",
                      engine="python", names=columnStr)
 ao['date'] = pd.to_datetime(ao[['year', 'month', 'day']])
 ao.set_index('date', inplace=True)
-ao.resample('M')
+ao = ao.resample('MS').mean()
 
 ao = ao.drop(columns={'year','month', 'day'})
 
-ao['nor_ao'] = (ao.ao - np.nanmean(ao.ao))/np.nanstd(ao.ao)
+ao['AO'] = (ao.ao - np.nanmean(ao.ao))/np.nanstd(ao.ao)
+ao = ao.drop(columns = 'ao')
 ao = ao.loc['1969-01-01':'2018-12-01'] # to have the same time period for all proxies
 
 
@@ -85,7 +90,7 @@ ao = ao.loc['1969-01-01':'2018-12-01'] # to have the same time period for all pr
 # NOI
 #   #   #   #   #   #
 columnStr = ['date', 'what','noi']
-noi = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/newProxies/NOI_NOAA2018.txt', header = None, sep = "\s *",
+noi = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/NOI_NOAA2018.txt', header = None, sep = "\s *",
                      engine="python", names=columnStr)
 noi['date'] = pd.to_datetime(noi['date'], format='%d-%b-%Y')
 noi['date'] = noi['date'] - pd.offsets.MonthBegin(1, normalize=True)
@@ -100,7 +105,7 @@ noi = noi.loc['1969-01-01':'2018-12-01']
 
 columnStr = ['year', 'month', 'NAO', 'EA','WP', 'EP_NP','PNA', 'EA_WR',
              'SCA', 'TNH', 'POL', 'PT', 'Expl_Var']
-tele = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/newProxies/tele_index.nh',
+tele = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/tele_index.nh',
                    header = None, sep = "\s *",
                    engine="python", names=columnStr, skiprows = 19)
 tele['day'] = len(tele) * [1]
@@ -115,7 +120,7 @@ tele = tele.loc['1969-01-01':'2018-12-01'] # to have the same time period for al
 #   #   #   #   #   #
 
 columnStr = ['bdate', 'global_aod', 'north_aod', 'south_aod']
-aod1 = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/teleconnection_indices/AOD.txt', header = None, sep = "\s *",
+aod1 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/teleconnection_indices/AOD.txt', header = None, sep = "\s *",
                    engine="python", names = columnStr)
 aod1['date'] = pd.date_range(start='1850-01-01', end='2012-09-01', freq = 'MS')
 
@@ -145,6 +150,13 @@ aod['south_nor'] = (aod.south_aod -  np.nanmean(aod.south_aod))/ np.nanstd(aod.s
 
 #   #   #   #   #   #
 
+new_predictors = tempsur
+new_predictors['AO'] = ao.AO
+new_predictors['pre_tropop'] = tropop['tropop_pre']
+new_predictors['temp_sur'] = tempsur['temp_nor']
+new_predictors['NOI'] = noi['noi_nor']
+new_predictors['EA'] = tele['EA']
+new_predictors['AOD'] = aod.global_nor
 
 
 
@@ -178,17 +190,53 @@ predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
 predictors_uccle['qboB'] = (QBO.pcb - QBO.pcb.mean())/QBO.pcb.std()
 predictors_uccle['solar'] = norsolar
 
-predictors_uccle['pre_tropop'] = tropop['tropop_pre']
+# missing dates from newpredictors need to be removed from predictors_uccle
+predictors_uccle.index = predictors_uccle.index.to_timestamp()
 
-predictors_uccle['temp_sur'] = tempsur['temp_nor']
-predictors_uccle['AO'] = ao['nor_ao']
-predictors_uccle['NOI'] = noi['noi_nor']
-predictors_uccle['EA'] = tele['EA']
-predictors_uccle['AOD'] = aod.global_nor
+datelist1 = new_predictors.index.tolist()
+datelist2 = predictors_uccle.index.date.tolist()
+
+d1 = [''] * len(datelist1); d2 = [''] * len(datelist2)
+for d in range(len(datelist1)):
+    d1[d] = datelist1[d].strftime('%Y-%m-%d')
+for di in range(len(datelist2)):
+    d2[di] = datelist2[di].strftime('%Y-%m-%d')
+
+set1 = set(d1)
+set2 = set(d2)
+difference = set1.symmetric_difference(set2)
+print(len(difference), difference)
+difference = list(difference)
+print(len(difference))
+print(difference[0:10])
+
+difdate = [0]* 41
+
+for j in range(41):
+    difdate[j] = datetime.strptime(difference[j], '%Y-%m-%d')
+
+predictors_uccle = predictors_uccle.drop(difdate)
+print(len(predictors_uccle))
+
+
+predictors_uccle['AO'] =  new_predictors.AO.tolist()
+
+predictors_uccle['pre_tropop'] = new_predictors['pre_tropop'].tolist()
+predictors_uccle['temp_sur'] = new_predictors['temp_sur'].tolist()
+
+predictors_uccle['NOI'] = new_predictors['NOI'].tolist()
+predictors_uccle['EA'] = new_predictors['EA'].tolist()
+predictors_uccle['AOD'] = new_predictors['AOD'].tolist()
 
 # frames2 = [predictors_uccle, new_predictors]
 # predictors_all = pd.concat(frames2)
 
-predictors_uccle.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors_uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+# predictors_uccle['date'] = pd.to_datetime(predictors_uccle['date'], format='%Y-%m')
+# predictors_uccle.set_index('date', inplace=True)
+
+
+
+predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
 

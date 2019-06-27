@@ -27,8 +27,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
 
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/' + plname + '.eps')
     plt.close()
 
 
@@ -41,21 +41,75 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 # tag = ''
 
 # part for using extended predictors
-pre_name = 'Baseline_ilt_extended'
+pre_name = 'NewPredictors'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
+
+# predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+# predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+# predictors.set_index('date', inplace=True)
+#
+#
+# #uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
+# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+#
+# uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
+# uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
+# uccle.set_index('date', inplace=True)
+
+# try new predictors
+
+predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+
+setp = set(predictors['Unnamed: 0'].tolist())
+
+
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m-%d')
 predictors.set_index('date', inplace=True)
 
+print('predictors', predictors[0:3])
+print('predictors test' , predictors.loc['1972-02-01'])
 
-#uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_relative.csv', index_col=0)
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+# For DeBilt
+# predictors = predictors.loc['1992-11-01':'2018-12-01']
 
-uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
-uccle['date'] =  pd.to_datetime(uccle['date'], format='%Y-%m')
+
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+
+print('uccle', len(uccle), list(uccle), uccle.index)
+setu = set(uccle.date.tolist())
+
+# uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
+#uccle['date'] =  dates
+# pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
+
+print('predictors', len(predictors), list(predictors))
+
+# remove uccle missing dates:
+
+print('setp.difference(setu)', setp.difference(setu))
+print('setu.difference(setp)', setu.difference(setp))
+
+removep = list(setp.difference(setu))
+removeu = list(setu.difference(setp))
+
+# difup = setp.symmetric_difference(setu)
+# print('difup',difup)
+# diup = list(difup)
+uccle = uccle.drop(removeu)
+print('after uccle', len(uccle))
+
+for j in range(len(removep)):
+    removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
+
+
+predictors = predictors.drop(removep)
+print('after pre', len(predictors))
+
 
 
 alt = [''] * 36
@@ -107,7 +161,7 @@ for i in range(36):
     uY[i] = uct[i][alt[i]].values
     uX[i] = predictors.values
 
-    print(i, len(uX[i]), len(uY[i]) )
+    # print(i, len(uX[i]), len(uY[i]) )
 
     # mean_pre[i] = np.nanmean(uct_pre[i][alt[i]].values)
     # mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
@@ -156,11 +210,11 @@ for i in range(36):
 # ax.legend(loc='upper right', frameon=True, fontsize='small')
 #
 #
-# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+# # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 #
 # plt.close()
 
@@ -194,10 +248,10 @@ eb2[-1][0].set_linestyle('--')
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname + "_rel"
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/RelTropop_' + plname + '.eps')
 
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 
 plt.close()

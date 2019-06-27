@@ -30,8 +30,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/' + plname + '.eps')
     plt.close()
     plt.close()
 
@@ -45,10 +45,17 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 # tag = ''
 
 # part for using extended predictors
-pre_name = 'Baseline_ilt_extended'
+pre_name = 'NewPredictors'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/Extended_ilt.csv')
+# predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+
+# try new predictors
+
+predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+
+setp = set(predictors['Unnamed: 0'].tolist())
+
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
@@ -58,15 +65,26 @@ predictors.set_index('date', inplace=True)
 # predictors = predictors.loc['1992-11-01':'2018-12-01']
 
 
-uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-# uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
-print(list(uccle))
-#dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
-uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
+#dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
+print('uccle', len(uccle), list(uccle))
+setu = set(uccle.date.tolist())
+
+# uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 #uccle['date'] =  dates
-pd.to_datetime(uccle['date'], format='%Y-%m')
+# pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
+
+print('predictors', len(predictors), list(predictors))
+
+# remove uccle missing dates:
+
+difup = setp.symmetric_difference(setu)
+diup = list(difup)
+uccle = uccle.drop(diup)
+
 
 print(list(uccle))
 alt = [''] * 36
@@ -122,6 +140,10 @@ for i in range(36):
     # mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
 
     uX[i] = predictors.values
+    # if i ==0 :
+    #     print(i, 'X', uX[i])
+    #     print(i, 'y', uY[i])
+
 
     regression_output[i] = mzm_regression(uX[i], uY[i])
     param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
@@ -185,8 +207,8 @@ eb2[-1][0].set_linestyle('--')
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 
-plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI//MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/RVM_range' + plname + '.eps')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()
