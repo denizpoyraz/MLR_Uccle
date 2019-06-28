@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+'''Code to compare 3 stations 500m resolution data with ILT regression'''
+
 
 def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     plt.close('all')
@@ -31,11 +33,6 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
 ######################################################################################################################
 
-# these are pwlt predictors from 1977
-# predictors = load_data('pred_baseline_ilt.csv')
-# pre_name = 'Baseline_pwlt'
-# plname = 'Trend_' + pre_name
-# tag = ''
 
 # part for using extended predictors
 pre_name = 'UcDBIA'

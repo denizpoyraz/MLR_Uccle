@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+from datetime import datetime
+
 
 
 def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
@@ -56,7 +58,7 @@ predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
 # uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
 #dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
@@ -67,10 +69,16 @@ setu = set(uccle.date.tolist())
 # pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 
-# remove uccle missing dates:
-difup = setp.symmetric_difference(setu)
-diup = list(difup)
-uccle = uccle.drop(diup)
+# remove  missing dates:
+removep = list(setp.difference(setu))
+removeu = list(setu.difference(setp))
+uccle = uccle.drop(removeu)
+print('after uccle', len(uccle))
+
+for j in range(len(removep)):
+    removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
+predictors = predictors.drop(removep)
+print('after pre', len(predictors))
 
 alt = [''] * 36
 alt_ds = [''] * 36
@@ -187,12 +195,16 @@ trend_pre_err = [0] * 36
 trend_post = [0] * 36
 trend_post_err = [0] * 36
 
+for irt in range(24,-12,-1):
+    alt[24-irt] = str(irt) + 'km_ds' #w.r.t. tropopause
+    alt_ds[24-irt] = str(irt) + 'km_ds' #w.r.t. tropopause
+
+    mY.append(irt)
 
 
 for i in range(36):
-    mY.append(i)
-    alt_ds[i] = str(i) + 'km_ds'
-    alt[i] = str(i) + 'km'
+    # alt_ds[i] = str(i) + 'km_ds'
+    # alt[i] = str(i) + 'km'
     uc[i] = uccle
     uct[i] = uc[i]
 
@@ -343,17 +355,18 @@ plt.close('all')
 fig, ax = plt.subplots()
 plt.title('Uccle 1969-2018')
 plt.xlabel('Ozone trend [%/dec]')
-plt.ylabel('Altitude [km]')
-plt.xlim(-15, 10)
-plt.ylim(0,35)
+plt.ylabel('Altitude relative to tropopause [km]')
+plt.xlim(-12, 12)
+plt.ylim(-12,24)
 ax.axvline(x=0, color='grey', linestyle='--')
+ax.axhline(y=0, color='grey', linestyle=':')
 
 ax.tick_params(axis='both', which='both', direction='in')
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')
 ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 ax.xaxis.set_minor_locator(AutoMinorLocator(5))
-ax.set_xticks([-15, -10, -5,0,5,10])
+ax.set_xticks([-10, -5,0,5,10])
 
 
 if totalcolumn:
@@ -401,11 +414,11 @@ else:
 
 #plt.plot(trend_postAOD, mY, label='post AOD', color='green')
 
-ax.legend(loc='lower left', frameon=True, fontsize='small')
+ax.legend(loc='upper left', frameon=True, fontsize='small')
 
 
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Step_' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Step_' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Step_RelTropop' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Step_RelTropop' + plname + '.eps')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()

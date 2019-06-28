@@ -4,6 +4,10 @@ import requests
 from io import StringIO
 from dateutil import relativedelta
 
+
+
+'''Code to extend ilt time series to the period of Uccle'''
+
 ''' main code from : https://arg.usask.ca/docs/LOTUS_regression/dev/_modules/LOTUS_regression/predictors/download.html'''
 
 def load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01', start_year = '1969-01-01', end_year = '2018-12-01'):
@@ -181,6 +185,20 @@ def load_solar():
 
     return solar
 
+def load_eesc():
+    """
+    Calculates an EESC from the polynomial values [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+    0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+    """
+    poly = [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+            0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+    np.polyval(poly, 1)
+
+    num_months = 12 * (pd.datetime.now().year - 1979) + pd.datetime.now().month
+    num_months = 600
+    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
+    return pd.Series([np.polyval(poly, month/12) for month in range(num_months)], index=index)
+
 
 # now make the dataframe for predictors
 
@@ -192,6 +210,8 @@ solar = load_solar()
 # print('solar', type(solar),list(solar))
 QBO = load_qbo(pca = 2)
 # print('QBO', list(QBO))
+
+
 
 ext_predictor = pd.DataFrame()
 
@@ -211,8 +231,6 @@ predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso'
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
 predictors_uccle['qboB'] = (QBO.pcb - QBO.pcb.mean())/QBO.pcb.std()
 predictors_uccle['solar'] = norsolar
-
-
 
 
 predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')

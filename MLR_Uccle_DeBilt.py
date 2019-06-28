@@ -21,10 +21,10 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
     plt.close()
     plt.close()
 
@@ -41,7 +41,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 pre_name = 'Abs'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
@@ -50,16 +50,16 @@ predictors.set_index('date', inplace=True)
 # For DeBilt
 predictors = predictors.loc['2000-01-01':'2018-12-01']
 
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_deas_relative.csv')
-# uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_deas_relative.csv')
+# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
 
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 uccle = uccle.loc['2000-01-01':'2018-12-01']
 
-# debilt = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
-debilt = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+# debilt = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
+debilt = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
 debilt.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(debilt['date'], format='%Y-%m')
@@ -210,8 +210,8 @@ eb2[-1][0].set_linestyle('--')
 ax.legend(loc='lower left', frameon=True, fontsize='small')
 
 
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-# plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
 plt.close()

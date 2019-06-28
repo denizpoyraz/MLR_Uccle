@@ -190,4 +190,4 @@ for ir2 in range(14):  # per each km
 all = pd.concat([uccle, dfde], axis=1, sort=False)
 #all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
 
-all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_plev_relative.csv')
+all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_deseas_plev.csv')

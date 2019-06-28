@@ -3,6 +3,8 @@ import numpy as np
 from datetime import datetime
 import astropy.time
 
+# Code to read data and convert it to a format I can analyze
+# Uccle
 
 year = [0]*50; month = [12]*12
 header = np.zeros((50, 12),dtype =int)

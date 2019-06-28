@@ -1,8 +1,9 @@
 import pandas as pd  
-import numpy as np  
-from datetime import datetime
 import astropy.time
-import dateutil.parser
+
+
+# Code to read data and convert it to a format I can analyze
+# IAGOS
 
 #df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_vertprof.txt',  sep = "\s *", engine="python")
 df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_vertprof500.txt',  sep = "\s *", engine="python")

@@ -4,6 +4,10 @@ from datetime import datetime
 import astropy.time
 import dateutil.parser
 
+
+# Code to read data and convert it to a format I can analyze
+# DEBilt
+
 df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_vertprofabs.txt',  sep = "\s *", engine="python")
 df_rel = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_vertprofrel.txt',  sep = "\s *", engine="python")
 
@@ -54,7 +58,6 @@ dfT_rel.to_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop.
 
 df5 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_vertprofabs500ppb.txt',  sep = "\s *", engine="python")
 
-
 julian_dates = df5.columns.tolist()
 julian_dates = julian_dates[1:]
 dates = [0]*len(julian_dates)
@@ -89,7 +92,5 @@ for c in range(nkm):
 
 
 df5T.columns = columns_ds
-
-# dfT.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean.csv')
 df5T.to_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean500.csv')
 

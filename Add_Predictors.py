@@ -2,12 +2,32 @@ import numpy as np
 import pandas as pd
 import astropy.time
 from datetime import datetime
+from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar, load_eesc
 
 
-import requests
-from io import StringIO
-from dateutil import relativedelta
-from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar
+## IMPORTANT, change the boolean if you want to make the standard predictors or the one for
+## total column
+
+totalcolumn = True
+
+
+# EESC#
+def load_eesc():
+    """
+    Extra note: normally this is not in LOTUS ilt model, but it is one of the proxies Roeland used for total column
+
+    Calculates an EESC from the polynomial values [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+    0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+    """
+    poly = [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+            0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+    np.polyval(poly, 1)
+
+    num_months = 12 * (pd.datetime.now().year - 1979) + pd.datetime.now().month
+    num_months = 600
+    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
+    return pd.Series([np.polyval(poly, month/12) for month in range(num_months)], index=index)
+
 
 #   #   #   #   #   #
 #  Tropopause Pressure txt and convert it to dates and normalize it
@@ -66,6 +86,35 @@ tempsur.set_index('date', inplace=True)
 tempsur['temp_nor'] = (tempsur.temp - np.nanmean(tempsur.temp))/np.nanstd(tempsur.temp)
 # tempsur['tempano_nor'] = (tempsur.ano - np.nanmean(tempsur.ano))/np.nanstd(tempsur.ano)
 tempsur = tempsur.drop(columns={'jdate','temp', 'ano'})
+
+#   #   #   #   #   #
+#  Temperature @ 100hPa
+#   #   #   #   #   #
+
+columnStr = ['jdate', 'temp', 'ano']
+temp100 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/temp100.txt', header = None, sep = "\s *",
+                     engine="python", names=columnStr)
+
+julian_dates = temp100['jdate'].tolist()
+dates = [0]*len(julian_dates)
+
+for d in range(len(julian_dates)):
+    tmp = julian_dates[d]
+    tmp = float(tmp)
+    tmp = int(tmp)
+    julian_dates[d] = int(tmp)
+
+    dates[d] = astropy.time.Time(julian_dates[d]-14,format='jd')
+    dates[d] = dates[d].iso
+    dates[d] = pd.to_datetime(dates[d]).date()
+
+temp100['date'] = dates
+pd.to_datetime(temp100['date'], format='%Y-%m')
+temp100.set_index('date', inplace=True)
+
+temp100['temp100_nor'] = (temp100.temp - np.nanmean(temp100.temp))/np.nanstd(temp100.temp)
+# temp100['tempano_nor'] = (temp100.ano - np.nanmean(temp100.ano))/np.nanstd(temp100.ano)
+temp100 = temp100.drop(columns={'jdate','temp', 'ano'})
 
 
 #   #   #   #   #   #
@@ -150,6 +199,8 @@ aod['south_nor'] = (aod.south_aod -  np.nanmean(aod.south_aod))/ np.nanstd(aod.s
 
 #   #   #   #   #   #
 
+
+
 new_predictors = tempsur
 new_predictors['AO'] = ao.AO
 new_predictors['pre_tropop'] = tropop['tropop_pre']
@@ -157,6 +208,11 @@ new_predictors['temp_sur'] = tempsur['temp_nor']
 new_predictors['NOI'] = noi['noi_nor']
 new_predictors['EA'] = tele['EA']
 new_predictors['AOD'] = aod.global_nor
+## only for total column
+if totalcolumn:
+    new_predictors['temp_100'] = temp100['temp100_nor']
+    new_predictors['EAWR'] = tele['EA_WR']
+    new_predictors['NAO'] = tele['NAO']
 
 
 
@@ -182,6 +238,8 @@ solar2 = pd.DataFrame(values, index= ex_dates, columns=['solar_mm'])
 solar = solar.append(solar2)
 solar['nor'] = (solar.solar_mm - np.mean(solar.solar_mm))/np.std(solar.solar_mm)
 norsolar = solar.nor.tolist()
+eesc = load_eesc()
+eesc_nor = (eesc - np.mean(eesc))/np.std(eesc)
 
 predictors_uccle = linear_trends
 predictors_uccle['enso'] = enso
@@ -189,6 +247,9 @@ predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso'
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
 predictors_uccle['qboB'] = (QBO.pcb - QBO.pcb.mean())/QBO.pcb.std()
 predictors_uccle['solar'] = norsolar
+# this is only for the total column
+if totalcolumn:predictors_uccle['EESC'] = eesc_nor
+
 
 # missing dates from newpredictors need to be removed from predictors_uccle
 predictors_uccle.index = predictors_uccle.index.to_timestamp()
@@ -220,23 +281,22 @@ print(len(predictors_uccle))
 
 
 predictors_uccle['AO'] =  new_predictors.AO.tolist()
-
-predictors_uccle['pre_tropop'] = new_predictors['pre_tropop'].tolist()
-predictors_uccle['temp_sur'] = new_predictors['temp_sur'].tolist()
-
-predictors_uccle['NOI'] = new_predictors['NOI'].tolist()
-predictors_uccle['EA'] = new_predictors['EA'].tolist()
 predictors_uccle['AOD'] = new_predictors['AOD'].tolist()
 
-# frames2 = [predictors_uccle, new_predictors]
-# predictors_all = pd.concat(frames2)
+if totalcolumn:
+    predictors_uccle['temp_100'] = new_predictors['temp_100'].tolist()
+    predictors_uccle['EAWR'] = new_predictors['EAWR'].tolist()
+    predictors_uccle['NAO'] = new_predictors['NAO'].tolist()
+else:
+    predictors_uccle['pre_tropop'] = new_predictors['pre_tropop'].tolist()
+    predictors_uccle['temp_sur'] = new_predictors['temp_sur'].tolist()
+    predictors_uccle['NOI'] = new_predictors['NOI'].tolist()
+    predictors_uccle['EA'] = new_predictors['EA'].tolist()
 
-# predictors_uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-# predictors_uccle['date'] = pd.to_datetime(predictors_uccle['date'], format='%Y-%m')
-# predictors_uccle.set_index('date', inplace=True)
 
-
-
-predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+if totalcolumn:
+    predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+else:
+    predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
 

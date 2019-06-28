@@ -3,6 +3,8 @@ import numpy as np
 from datetime import datetime
 
 
+# Code to deseasonalize 3 station data seperatley
+
 uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
 # DeBilt
 # uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean.csv')
@@ -188,8 +190,8 @@ print('end')
 #all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_deseas.csv')
 
 dfde.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_deseas.csv')
-# dfde.to_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_desas.csv')
-# dfde.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean_desas.csv')
+# dfde.to_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+# dfde.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas.csv')
 
 #########################################################################################################################
 

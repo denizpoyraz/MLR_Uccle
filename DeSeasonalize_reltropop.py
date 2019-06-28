@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
+# Code to deseasonalize 3 station data seperatley w.r.t to the tropopause
+
+
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
 # DeBilt
 # uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean.csv')
-# IAGOS
-# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean.csv')
 
 uccle.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -21,10 +21,6 @@ ny = 50 # number of years
 # de bilt
 # nkm = 36
 # ny = 26
-# IAGOS
-# nkm = 12
-# ny = 24
-
 
 uc = {}
 uct = {}
@@ -179,37 +175,6 @@ for ir2 in range(nkm-1, -1, -1):  # per each km
 
 print('end')
 
-#all = pd.concat([uccle, dfde], axis=1, sort=False)
-#all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_deseas.csv')
 
 dfde.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
 # dfde.to_csv('/home/poyraden/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
-# dfde.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas.csv')
-
-#########################################################################################################################
-
-#
-# if (pd.Timestamp(i2).month == 1):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jan_mean[ir2]
-# if (pd.Timestamp(i2).month == 2):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - feb_mean[ir2]
-# if (pd.Timestamp(i2).month == 3):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - mar_mean[ir2]
-# if (pd.Timestamp(i2).month == 4):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - apr_mean[ir2]
-# if (pd.Timestamp(i2).month == 5):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - may_mean[ir2]
-# if (pd.Timestamp(i2).month == 6):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jun_mean[ir2]
-# if (pd.Timestamp(i2).month == 7):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - jul_mean[ir2]
-# if (pd.Timestamp(i2).month == 8):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - aug_mean[ir2]
-# if (pd.Timestamp(i2).month == 9):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - sep_mean[ir2]
-# if (pd.Timestamp(i2).month == 10):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - oct_mean[ir2]
-# if (pd.Timestamp(i2).month == 11):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - nov_mean[ir2]
-# if (pd.Timestamp(i2).month == 12):
-#     uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] = uct2[ir2][alt[ir2]].loc[pd.Timestamp(i2)] - dec_mean[ir2]
