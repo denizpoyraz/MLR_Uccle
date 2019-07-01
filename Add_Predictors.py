@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import astropy.time
 from datetime import datetime
-from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar, load_eesc
+from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar, load_giss_aod
 
 
 ## IMPORTANT, change the boolean if you want to make the standard predictors or the one for
@@ -10,23 +10,6 @@ from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load
 
 totalcolumn = True
 
-
-# EESC#
-def load_eesc():
-    """
-    Extra note: normally this is not in LOTUS ilt model, but it is one of the proxies Roeland used for total column
-
-    Calculates an EESC from the polynomial values [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
-    0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
-    """
-    poly = [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
-            0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
-    np.polyval(poly, 1)
-
-    num_months = 12 * (pd.datetime.now().year - 1979) + pd.datetime.now().month
-    num_months = 600
-    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
-    return pd.Series([np.polyval(poly, month/12) for month in range(num_months)], index=index)
 
 
 #   #   #   #   #   #
@@ -86,6 +69,7 @@ tempsur.set_index('date', inplace=True)
 tempsur['temp_nor'] = (tempsur.temp - np.nanmean(tempsur.temp))/np.nanstd(tempsur.temp)
 # tempsur['tempano_nor'] = (tempsur.ano - np.nanmean(tempsur.ano))/np.nanstd(tempsur.ano)
 tempsur = tempsur.drop(columns={'jdate','temp', 'ano'})
+tempsur['temp_sur'] = tempsur['temp_nor']
 
 #   #   #   #   #   #
 #  Temperature @ 100hPa
@@ -115,6 +99,36 @@ temp100.set_index('date', inplace=True)
 temp100['temp100_nor'] = (temp100.temp - np.nanmean(temp100.temp))/np.nanstd(temp100.temp)
 # temp100['tempano_nor'] = (temp100.ano - np.nanmean(temp100.ano))/np.nanstd(temp100.ano)
 temp100 = temp100.drop(columns={'jdate','temp', 'ano'})
+
+
+#   #   #   #   #   #
+#  Temperature @ 500hPa
+#   #   #   #   #   #
+
+columnStr = ['jdate', 'temp', 'ano']
+temp500 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/newProxies/temp500.txt', header = None, sep = "\s *",
+                     engine="python", names=columnStr)
+
+julian_dates = temp500['jdate'].tolist()
+dates = [0]*len(julian_dates)
+
+for d in range(len(julian_dates)):
+    tmp = julian_dates[d]
+    tmp = float(tmp)
+    tmp = int(tmp)
+    julian_dates[d] = int(tmp)
+
+    dates[d] = astropy.time.Time(julian_dates[d]-14,format='jd')
+    dates[d] = dates[d].iso
+    dates[d] = pd.to_datetime(dates[d]).date()
+
+temp500['date'] = dates
+pd.to_datetime(temp500['date'], format='%Y-%m')
+temp500.set_index('date', inplace=True)
+
+temp500['temp500_nor'] = (temp500.temp - np.nanmean(temp500.temp))/np.nanstd(temp500.temp)
+# temp500['tempano_nor'] = (temp500.ano - np.nanmean(temp500.ano))/np.nanstd(temp500.ano)
+temp500 = temp500.drop(columns={'jdate','temp', 'ano'})
 
 
 #   #   #   #   #   #
@@ -164,38 +178,38 @@ tele = tele.drop(columns={'year','month', 'day'})
 
 tele = tele.loc['1969-01-01':'2018-12-01'] # to have the same time period for all proxies
 
-#   #   #   #   #   #
-#AOD
-#   #   #   #   #   #
-
-columnStr = ['bdate', 'global_aod', 'north_aod', 'south_aod']
-aod1 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/teleconnection_indices/AOD.txt', header = None, sep = "\s *",
-                   engine="python", names = columnStr)
-aod1['date'] = pd.date_range(start='1850-01-01', end='2012-09-01', freq = 'MS')
-
-aod1.set_index('date', inplace=True)
-aod1 = aod1.drop(columns={'bdate'})
-
-mean_glob = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['global_aod'].tolist())
-mean_north = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['north_aod'].tolist())
-mean_south = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['south_aod'].tolist())
-
-aod2 = pd.DataFrame()
-aod2['date'] = pd.date_range(start='2012-10-01', end='2018-12-01', freq = 'MS')
-aod2['global_aod'] = [mean_glob] * len(aod2)
-aod2['north_aod'] = [mean_north] * len(aod2)
-aod2['south_aod'] = [mean_south] * len(aod2)
-
-aod2.set_index('date', inplace=True)
-
-frames = [aod1, aod2]
-aod = pd.concat(frames)
-aod = aod.loc['1969-01-01':'2018-12-01']
-
-aod['global_nor'] = (aod.global_aod -  np.nanmean(aod.global_aod))/ np.nanstd(aod.global_aod)
-aod['north_nor'] = (aod.north_aod -  np.nanmean(aod.north_aod))/ np.nanstd(aod.north_aod)
-aod['south_nor'] = (aod.south_aod -  np.nanmean(aod.south_aod))/ np.nanstd(aod.south_aod)
-
+# #   #   #   #   #   #
+# #AOD
+# #   #   #   #   #   #
+#
+# columnStr = ['bdate', 'global_aod', 'north_aod', 'south_aod']
+# aod1 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/teleconnection_indices/AOD.txt', header = None, sep = "\s *",
+#                    engine="python", names = columnStr)
+# aod1['date'] = pd.date_range(start='1850-01-01', end='2012-09-01', freq = 'MS')
+#
+# aod1.set_index('date', inplace=True)
+# aod1 = aod1.drop(columns={'bdate'})
+#
+# mean_glob = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['global_aod'].tolist())
+# mean_north = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['north_aod'].tolist())
+# mean_south = np.nanmean(aod1.loc['2009-01-01':'2012-09-01']['south_aod'].tolist())
+#
+# aod2 = pd.DataFrame()
+# aod2['date'] = pd.date_range(start='2012-10-01', end='2018-12-01', freq = 'MS')
+# aod2['global_aod'] = [mean_glob] * len(aod2)
+# aod2['north_aod'] = [mean_north] * len(aod2)
+# aod2['south_aod'] = [mean_south] * len(aod2)
+#
+# aod2.set_index('date', inplace=True)
+#
+# frames = [aod1, aod2]
+# aod = pd.concat(frames)
+# aod = aod.loc['1969-01-01':'2018-12-01']
+#
+# aod['global_nor'] = (aod.global_aod -  np.nanmean(aod.global_aod))/ np.nanstd(aod.global_aod)
+# aod['north_nor'] = (aod.north_aod -  np.nanmean(aod.north_aod))/ np.nanstd(aod.north_aod)
+# aod['south_nor'] = (aod.south_aod -  np.nanmean(aod.south_aod))/ np.nanstd(aod.south_aod)
+#
 
 #   #   #   #   #   #
 
@@ -207,10 +221,11 @@ new_predictors['pre_tropop'] = tropop['tropop_pre']
 new_predictors['temp_sur'] = tempsur['temp_nor']
 new_predictors['NOI'] = noi['noi_nor']
 new_predictors['EA'] = tele['EA']
-new_predictors['AOD'] = aod.global_nor
+#new_predictors['AOD'] = aod.global_nor
 ## only for total column
 if totalcolumn:
     new_predictors['temp_100'] = temp100['temp100_nor']
+    new_predictors['temp_500'] = temp500['temp500_nor']
     new_predictors['EAWR'] = tele['EA_WR']
     new_predictors['NAO'] = tele['NAO']
 
@@ -238,17 +253,20 @@ solar2 = pd.DataFrame(values, index= ex_dates, columns=['solar_mm'])
 solar = solar.append(solar2)
 solar['nor'] = (solar.solar_mm - np.mean(solar.solar_mm))/np.std(solar.solar_mm)
 norsolar = solar.nor.tolist()
-eesc = load_eesc()
-eesc_nor = (eesc - np.mean(eesc))/np.std(eesc)
+# eesc = load_eesc()
+# eesc_nor = (eesc - np.mean(eesc))/np.std(eesc)
+aod = load_giss_aod()
+aod = aod['1969-01':'2018-12']
+aod_nor = (aod - np.mean(aod))/np.std(aod)
 
+# the standard ILT
 predictors_uccle = linear_trends
 predictors_uccle['enso'] = enso
 predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso']
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
 predictors_uccle['qboB'] = (QBO.pcb - QBO.pcb.mean())/QBO.pcb.std()
 predictors_uccle['solar'] = norsolar
-# this is only for the total column
-if totalcolumn:predictors_uccle['EESC'] = eesc_nor
+predictors_uccle['AOD'] = aod_nor
 
 
 # missing dates from newpredictors need to be removed from predictors_uccle
@@ -280,15 +298,16 @@ predictors_uccle = predictors_uccle.drop(difdate)
 print(len(predictors_uccle))
 
 
+
 predictors_uccle['AO'] =  new_predictors.AO.tolist()
-predictors_uccle['AOD'] = new_predictors['AOD'].tolist()
+predictors_uccle['pre_tropop'] = new_predictors['pre_tropop'].tolist()
 
 if totalcolumn:
     predictors_uccle['temp_100'] = new_predictors['temp_100'].tolist()
+    predictors_uccle['temp_500'] = new_predictors['temp_500'].tolist()
     predictors_uccle['EAWR'] = new_predictors['EAWR'].tolist()
     predictors_uccle['NAO'] = new_predictors['NAO'].tolist()
 else:
-    predictors_uccle['pre_tropop'] = new_predictors['pre_tropop'].tolist()
     predictors_uccle['temp_sur'] = new_predictors['temp_sur'].tolist()
     predictors_uccle['NOI'] = new_predictors['NOI'].tolist()
     predictors_uccle['EA'] = new_predictors['EA'].tolist()

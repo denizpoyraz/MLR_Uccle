@@ -8,8 +8,6 @@ from matplotlib.ticker import AutoMinorLocator
 
 import statsmodels as sm
 from datetime import datetime
-from scipy import stats
-from Extend_Predictors import load_enso, load_independent_linear, load_qbo, load_solar
 
 
 def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):

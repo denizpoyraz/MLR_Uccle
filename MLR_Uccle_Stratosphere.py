@@ -37,7 +37,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 # tag = ''
 
 # part for using extended predictors
-pre_name = 'NewPredictors_Stratosphere'
+pre_name = 'NewPredictors_Stratosphere_One'
 plname = 'Trend_' + pre_name
 tag = ''
 # predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
@@ -68,81 +68,86 @@ difup = setp.symmetric_difference(setu)
 diup = list(difup)
 uccle = uccle.drop(diup)
 
-alt = [''] * 24
-alt_ds = [''] * 24
+alt = [''] * 36
+alt_ds = [''] * 36
 
 uc = {}
 uct = {}
 ucm = {}
 
 mY = []
-ut = [0] * 24
+ut = [0] * 36
 
-predictorsilt = predictors.drop(columns=['pre_tropop', 'temp_sur', 'AO', 'NOI', "EA", 'AOD'])
-predictorsAO = predictors.drop(columns=['pre_tropop', 'temp_sur', 'NOI', "EA", 'AOD'])
-predictorsEA = predictors.drop(columns=['pre_tropop', 'temp_sur','NOI', 'AOD'])
-predictorsAOD = predictors.drop(columns=['pre_tropop', 'temp_sur', 'NOI'])
-predictorspretropop = predictors.drop(columns=['temp_sur','NOI'])
+# ## By Step
+# predictorsilt = predictors.drop(columns=['pre_tropop', 'temp_sur', 'AO', 'NOI', 'EA'])
+# predictorsAO = predictors.drop(columns=['pre_tropop', 'temp_sur', 'NOI', 'EA'])
+# predictorsEA = predictors.drop(columns=['pre_tropop', 'temp_sur',  'NOI'])
+# predictorspretropop = predictors.drop(columns=['temp_sur', 'NOI'])
 
+## One by One
+predictorsilt = predictors.drop(columns=['pre_tropop', 'temp_sur', 'AO', 'NOI', 'EA'])
+predictorsAO = predictors.drop(columns=['pre_tropop', 'temp_sur', 'NOI', 'EA'])
+predictorsEA = predictors.drop(columns=['pre_tropop', 'temp_sur', 'NOI', 'AO'])
+predictorspretropop = predictors.drop(columns=[ 'temp_sur', 'NOI', 'AO', 'EA'])
+predictorsall = predictors.drop(columns=[ 'temp_sur', 'NOI'])
 
-#predictorstemp_sur = predictors.drop(columns=[ 'AO', 'NOI', "EA", 'AOD'])
 
 #effect of temp surface is on the full predictor predictors
 
-regression_outputilt = [0] * 24
-uXilt = [0] * 24
-uYilt = [0] * 24
-param_listilt = [0] * 24
-error_listilt = [0] * 24
-trend_preilt = [0] * 24
-trend_pre_errilt = [0] * 24
-trend_postilt = [0] * 24
-trend_post_errilt = [0] * 24
+regression_outputilt = [0] * 36
+uXilt = [0] * 36
+uYilt = [0] * 36
+param_listilt = [0] * 36
+error_listilt = [0] * 36
+trend_preilt = [0] * 36
+trend_pre_errilt = [0] * 36
+trend_postilt = [0] * 36
+trend_post_errilt = [0] * 36
 ##
-regression_outputpretropop = [0] * 24
-uXpretropop = [0] * 24
-uYpretropop = [0] * 24
-param_listpretropop = [0] * 24
-error_listpretropop = [0] * 24
-trend_prepretropop = [0] * 24
-trend_pre_errpretropop = [0] * 24
-trend_postpretropop = [0] * 24
-trend_post_errpretropop = [0] * 24
+regression_outputpretropop = [0] * 36
+uXpretropop = [0] * 36
+uYpretropop = [0] * 36
+param_listpretropop = [0] * 36
+error_listpretropop = [0] * 36
+trend_prepretropop = [0] * 36
+trend_pre_errpretropop = [0] * 36
+trend_postpretropop = [0] * 36
+trend_post_errpretropop = [0] * 36
 ##
-regression_outputAOD = [0] * 24
-uXAOD = [0] * 24
-uYAOD = [0] * 24
-param_listAOD = [0] * 24
-error_listAOD = [0] * 24
-trend_preAOD = [0] * 24
-trend_pre_errAOD = [0] * 24
-trend_postAOD = [0] * 24
-trend_post_errAOD = [0] * 24
+regression_outputall = [0] * 36
+uXall = [0] * 36
+uYall = [0] * 36
+param_listall = [0] * 36
+error_listall = [0] * 36
+trend_preall = [0] * 36
+trend_pre_errall = [0] * 36
+trend_postall = [0] * 36
+trend_post_errall = [0] * 36
 ##
-regression_outputAO = [0] * 24
-uXAO = [0] * 24
-uYAO = [0] * 24
-param_listAO = [0] * 24
-error_listAO = [0] * 24
-trend_preAO = [0] * 24
-trend_pre_errAO = [0] * 24
-trend_postAO = [0] * 24
-trend_post_errAO = [0] * 24
+regression_outputAO = [0] * 36
+uXAO = [0] * 36
+uYAO = [0] * 36
+param_listAO = [0] * 36
+error_listAO = [0] * 36
+trend_preAO = [0] * 36
+trend_pre_errAO = [0] * 36
+trend_postAO = [0] * 36
+trend_post_errAO = [0] * 36
 ##
-regression_outputEA = [0] * 24
-uXEA = [0] * 24
-uYEA = [0] * 24
-param_listEA = [0] * 24
-error_listEA = [0] * 24
-trend_preEA = [0] * 24
-trend_pre_errEA = [0] * 24
-trend_postEA = [0] * 24
-trend_post_errEA = [0] * 24
+regression_outputEA = [0] * 36
+uXEA = [0] * 36
+uYEA = [0] * 36
+param_listEA = [0] * 36
+error_listEA = [0] * 36
+trend_preEA = [0] * 36
+trend_pre_errEA = [0] * 36
+trend_postEA = [0] * 36
+trend_post_errEA = [0] * 36
 
 
-for i in range(12, 36,1):
+for i in range(36):
     akm = i
-    i = i-12
+    # i = i-12
     mY.append(akm)
     alt_ds[i] = str(akm) + 'km_ds'
     uc[i] = uccle
@@ -199,23 +204,6 @@ for i in range(12, 36,1):
     trend_postEA[i] = trend_postEA[i] * 100
     trend_post_errEA[i] = 2 * trend_post_errEA[i] * 100
 
-    ## AOD
-    predictorsAOD, uct[i] = pd.DataFrame.align(predictorsAOD, uct[i], axis=0)
-    uYAOD[i] = uct[i][alt_ds[i]].values
-    uXAOD[i] = predictorsAOD.values
-    regression_outputAOD[i] = mzm_regression(uXAOD[i], uYAOD[i])
-    param_listAOD[i] = dict(zip(list(predictorsAOD), regression_outputAOD[i]['gls_results'].params))
-    error_listAOD[i] = dict(zip(list(predictorsAOD), regression_outputAOD[i]['gls_results'].bse))
-    trend_preAOD[i] = param_listAOD[i]['linear_pre']
-    trend_pre_errAOD[i] = error_listAOD[i]['linear_pre']
-    trend_postAOD[i] = param_listAOD[i]['linear_post']
-    trend_post_errAOD[i] = error_listAOD[i]['linear_post']
-    # for % in decade for relative montly anamoly
-    trend_preAOD[i] = trend_preAOD[i] * 100
-    trend_pre_errAOD[i] = 2 * trend_pre_errAOD[i] * 100
-    trend_postAOD[i] = trend_postAOD[i] * 100
-    trend_post_errAOD[i] = 2 * trend_post_errAOD[i] * 100
-
     ## pressure tropopause
     predictorspretropop, uct[i] = pd.DataFrame.align(predictorspretropop, uct[i], axis=0)
     uYpretropop[i] = uct[i][alt_ds[i]].values
@@ -233,6 +221,23 @@ for i in range(12, 36,1):
     trend_postpretropop[i] = trend_postpretropop[i] * 100
     trend_post_errpretropop[i] = 2 * trend_post_errpretropop[i] * 100
 
+    # ## all
+    predictorsall, uct[i] = pd.DataFrame.align(predictorsall, uct[i], axis=0)
+    uYall[i] = uct[i][alt_ds[i]].values
+    uXall[i] = predictorsall.values
+    regression_outputall[i] = mzm_regression(uXall[i], uYall[i])
+    param_listall[i] = dict(zip(list(predictorsall), regression_outputall[i]['gls_results'].params))
+    error_listall[i] = dict(zip(list(predictorsall), regression_outputall[i]['gls_results'].bse))
+    trend_preall[i] = param_listall[i]['linear_pre']
+    trend_pre_errall[i] = error_listall[i]['linear_pre']
+    trend_postall[i] = param_listall[i]['linear_post']
+    trend_post_errall[i] = error_listall[i]['linear_post']
+    # for % in decade for relative montly anamoly
+    trend_preall[i] = trend_preall[i] * 100
+    trend_pre_errall[i] = 2 * trend_pre_errall[i] * 100
+    trend_postall[i] = trend_postall[i] * 100
+    trend_post_errall[i] = 2 * trend_post_errall[i] * 100
+
 
 
 plt.close('all')
@@ -242,7 +247,7 @@ plt.title('Uccle 1969-2018')
 plt.xlabel('Ozone trend [%/dec]')
 plt.ylabel('Altitude [km]')
 plt.xlim(-12, 15)
-plt.ylim(12,32)
+plt.ylim(0, 36)
 ax.axvline(x=0, color='grey', linestyle='--')
 
 ax.tick_params(axis='both', which='both', direction='in')
@@ -251,32 +256,43 @@ ax.xaxis.set_ticks_position('both')
 ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax.set_xticks([ -10, -5,0,5,10, 15])
-ax.set_yticks([ 12, 15,20,25,30])
+# ax.set_yticks([ 12, 15,20,25,30])
 
 
-plt.plot(trend_preilt, mY, label='pre ilt', color='gold')
-plt.plot(trend_preAO, mY, label='pre AO', color='darkorange')
-plt.plot(trend_preEA, mY, label='pre EA', color='indianred')
-plt.plot(trend_preAOD, mY, label='pre AOD', color='purple')
-
-eb1 = ax.errorbar(trend_prepretropop, mY, xerr=trend_post_errpretropop, label='pre pressure tropop (all)', color='red', linewidth=1,
+eb1 = ax.errorbar(trend_preilt, mY, xerr=trend_pre_errilt, label='pre ilt', color='red', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb1[-1][0].set_linestyle('--')
 
-#plt.plot(trend_preAOD, mY, label='pre AOD', color='gold')
+# plt.plot(trend_preilt, mY, label='pre ilt', color='red')
+plt.plot(trend_preAO, mY, label='pre AO', color='darkorange')
+plt.plot(trend_preEA, mY, label='pre EA', color='indianred')
+plt.plot(trend_prepretropop, mY, label='pre tropop pressure', color='purple')
+plt.plot(trend_preall, mY, label='pre all', color='gold',linewidth=2)
 
 
+# eb1 = ax.errorbar(trend_preall, mY, xerr=trend_preallall, label='pre all', color='gold', linewidth=2,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb1[-1][0].set_linestyle('--')
 
-plt.plot(trend_postilt, mY, label='post ilt', color='limegreen')
-plt.plot(trend_postAO, mY, label='post AO', color='olive')
-plt.plot(trend_postEA, mY, label='post EA', color='royalblue')
-plt.plot(trend_postAOD, mY, label='post AOD', color='blue')
+#plt.plot(trend_preall, mY, label='pre all', color='gold')
 
-eb2 = ax.errorbar(trend_postpretropop, mY, xerr=trend_post_errpretropop, label='post pressure tropop (all)', color='black', linewidth=1,
+
+eb2 = ax.errorbar(trend_postilt, mY, xerr=trend_post_errilt, label='post ilt', color='limegreen', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb2[-1][0].set_linestyle('--')
 
-#plt.plot(trend_postAOD, mY, label='post AOD', color='green')
+# plt.plot(trend_postilt, mY, label='post ilt', color='limegreen', linewidth=1.5)
+plt.plot(trend_postAO, mY, label='post AO', color='olive')
+plt.plot(trend_postEA, mY, label='post EA', color='royalblue')
+plt.plot(trend_postpretropop, mY, label='post tropop pressure', color='cyan', linewidth=1.5)
+plt.plot(trend_postall, mY, label='post all', color='black',linewidth=1)
+
+
+# eb2 = ax.errorbar(trend_postpretropop, mY, xerr=trend_post_errpretropop, label='post pressure tropop (all)', color='black', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb2[-1][0].set_linestyle('--')
+
+#plt.plot(trend_postall, mY, label='post all', color='green')
 
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 

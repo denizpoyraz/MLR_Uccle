@@ -3,6 +3,11 @@ import pandas as pd
 import requests
 from io import StringIO
 from dateutil import relativedelta
+import os
+import appdirs
+import time
+from datetime import datetime
+import xarray as xr
 
 
 
@@ -185,20 +190,62 @@ def load_solar():
 
     return solar
 
-def load_eesc():
-    """
-    Calculates an EESC from the polynomial values [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
-    0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
-    """
-    poly = [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
-            0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
-    np.polyval(poly, 1)
+# def load_eesc():
+#     """
+#     Calculates an EESC from the polynomial values [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+#     0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+#     """
+#     poly = [9.451393e-10, -1.434144e-7, 8.5901032e-6, -0.0002567041,
+#             0.0040246245, -0.03355533, 0.14525718, 0.71710218, 0.1809734]
+#     np.polyval(poly, 1)
+#
+#     num_months = 12 * (pd.datetime.now().year - 1979) + pd.datetime.now().month
+#     num_months = 600
+#     index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
+#     return pd.Series([np.polyval(poly, month/12) for month in range(num_months)], index=index)
 
-    num_months = 12 * (pd.datetime.now().year - 1979) + pd.datetime.now().month
-    num_months = 600
-    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
-    return pd.Series([np.polyval(poly, month/12) for month in range(num_months)], index=index)
 
+def load_giss_aod():
+    """
+    Loads the giss aod index from giss
+    """
+    filename = 'tau_map_2012-12.nc'
+
+    save_path = os.path.join(appdirs.user_data_dir(), filename)
+    directory = os.path.dirname(save_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Only fetch from the ftp if the file does not exist
+    if not os.path.exists(save_path) or time.time():
+        r = requests.get(r'https://data.giss.nasa.gov/modelforce/strataer/tau_map_2012-12.nc')
+
+        with open(save_path, 'wb') as f:
+            f.write(r.content)
+
+    data = xr.open_dataset(save_path)
+
+    data = data.mean(dim='lat')['tau'].to_dataframe()
+
+    data.index = data.index.map(lambda row: pd.datetime(int(row.year), int(row.month), 1)).to_period(freq='M')
+    data.index.names = ['time']
+
+    # Find the last non-zero entry and extend to the current date
+    last_nonzero_idx = data[data['tau'] != 0].index[-1]
+    last_nonzero_idx = np.argmax(data.index == last_nonzero_idx)
+
+    # Extend the index to approximately now
+    num_months = 12 * (pd.datetime.now().year - data.index[0].year) + pd.datetime.now().month
+    index = pd.date_range(data.index[0].to_timestamp(), periods=num_months, freq='M').to_period(freq='M')
+
+    # New values
+    vals = np.zeros(len(index))
+    vals[:last_nonzero_idx] = data['tau'].values[:last_nonzero_idx]
+    vals[last_nonzero_idx:] = data['tau'].values[last_nonzero_idx]
+
+    new_aod = pd.Series(vals, index=index, name='aod')
+
+    return new_aod
 
 # now make the dataframe for predictors
 
@@ -210,6 +257,9 @@ solar = load_solar()
 # print('solar', type(solar),list(solar))
 QBO = load_qbo(pca = 2)
 # print('QBO', list(QBO))
+aod = load_giss_aod()
+aod = aod['1969-01':'2018-12']
+aod_nor = (aod - np.mean(aod))/np.std(aod)
 
 
 
@@ -231,6 +281,7 @@ predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso'
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
 predictors_uccle['qboB'] = (QBO.pcb - QBO.pcb.mean())/QBO.pcb.std()
 predictors_uccle['solar'] = norsolar
+predictors_uccle['AOD'] = aod_nor
 
 
 predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
