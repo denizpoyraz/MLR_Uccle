@@ -39,7 +39,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 totalcolumn = True
 
 # part for using extended predictors
-if totalcolumn: pre_name = 'TotalColumn_ByOne_RelTropop'
+if totalcolumn: pre_name = 'TotalColumn_ByStep'
 
 else: pre_name = "All_"
 plname = 'Trend_' + pre_name
@@ -59,8 +59,8 @@ predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 
-# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+# uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
 
 #dates = pd.date_range(start='1992-11', end='2018-12', freq = 'MS')
 setu = set(uccle.date.tolist())
@@ -95,12 +95,29 @@ ucm = {}
 mY = []
 ut = [0] * 36
 
+## one by one
+# predictorsilt = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100','temp_500'])
+# predictorsEA = predictors.drop(columns=['pre_tropop','NAO','AO','temp_100','temp_500'])# EAWR
+# predictorsNOI = predictors.drop(columns=['pre_tropop','EAWR','AO','temp_100','temp_500'])#NOA
+# predictorsAO = predictors.drop(columns=['pre_tropop','EAWR','NAO','temp_100','temp_500'])#AO
+# predictorsEESC = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_500'])#T@100
+# predictorsAOD = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100'])#T@500
+
+# ## step by step
 predictorsilt = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100','temp_500'])
 predictorsEA = predictors.drop(columns=['pre_tropop','NAO','AO','temp_100','temp_500'])# EAWR
-predictorsNOI = predictors.drop(columns=['pre_tropop','EAWR','AO','temp_100','temp_500'])#NOA
-predictorsAO = predictors.drop(columns=['pre_tropop','EAWR','NAO','temp_100','temp_500'])#AO
-predictorsEESC = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_500'])#T@100
-predictorsAOD = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100'])#T@500
+predictorsNOI = predictors.drop(columns=['pre_tropop','AO','temp_100','temp_500'])#NOA
+predictorsAO = predictors.drop(columns=['pre_tropop','temp_100','temp_500'])#AO
+predictorsEESC = predictors.drop(columns=['pre_tropop','temp_500'])#T@100
+predictorsAOD = predictors.drop(columns=['pre_tropop'])#T@500
+
+# ## step by step different order
+# predictorsilt = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100','temp_500'])
+# predictorsEA = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_500'])# T@100
+# predictorsNOI = predictors.drop(columns=['pre_tropop','EAWR','NAO','temp_500'])# AO
+# predictorsAO = predictors.drop(columns=['pre_tropop','NAO','temp_500'])#EAWR
+# predictorsEESC = predictors.drop(columns=['pre_tropop','temp_500'])#T@500
+# predictorsAOD = predictors.drop(columns=['pre_tropop'])#T@500
 
 #effect of temp surface is on the full predictor predictors
 
@@ -188,18 +205,18 @@ trend_post_err = [0] * 36
 
 
 
-# for i in range(36):
-#     mY.append(i)
-#     alt_ds[i] = str(i) + 'km_ds'
-#     alt[i] = str(i) + 'km'
+for i in range(36):
+    mY.append(i)
+    alt_ds[i] = str(i) + 'km_ds'
+    alt[i] = str(i) + 'km'
 
-for i in range(-11, 25, 1):
-    #reltropop
-    akm = i
-    i = i + 11
-    mY.append(akm)
-    alt_ds[i] = str(akm) + 'km_ds'
-    alt[i] = str(akm) + 'km'
+# for i in range(-11, 25, 1):
+#     #reltropop
+#     akm = i
+#     i = i + 11
+#     mY.append(akm)
+#     alt_ds[i] = str(akm) + 'km_ds'
+#     alt[i] = str(akm) + 'km'
 
 
     uc[i] = uccle
@@ -353,8 +370,8 @@ fig, ax = plt.subplots()
 plt.title('Uccle 1969-2018')
 plt.xlabel('Ozone trend [%/dec]')
 plt.ylabel('Altitude [km]')
-plt.xlim(-12, 12)
-plt.ylim(-12,25)
+plt.xlim(-15, 12)
+plt.ylim(0, 35)
 ax.axvline(x=0, color='grey', linestyle='--')
 ax.axhline(y=0, color='grey', linestyle=':')
 
@@ -366,33 +383,79 @@ ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax.set_xticks([-10, -5,0,5,10])
 
 
-if totalcolumn:
-    eb1 = ax.errorbar(trend_preilt,mY,xerr=trend_pre_errilt,label='pre ilt',color='red',linewidth=1.5,
-                      elinewidth=0.5,capsize=1.5,capthick=1)
-    eb1[-1][0].set_linestyle('--')
+# predictorsilt = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_100','temp_500'])
+# predictorsEA = predictors.drop(columns=['pre_tropop','EAWR','NAO','AO','temp_500'])# T@100
+# predictorsNOI = predictors.drop(columns=['pre_tropop','EAWR','NAO','temp_500'])# AO
+# predictorsAO = predictors.drop(columns=['pre_tropop','NAO','temp_500'])#EAWR
+# predictorsEESC = predictors.drop(columns=['pre_tropop','temp_500'])#NAO
+# predictorsAOD = predictors.drop(columns=['pre_tropop'])#T@500
 
-    plt.plot(trend_preEA, mY, label='pre ilt+EAWR', color='indianred',linewidth = 1.5, linestyle = '--')
-    plt.plot(trend_preNOI, mY, label='pre ilt+NAO', color='darkred', linewidth = 1.5, linestyle = ':')
-    plt.plot(trend_preAOD, mY, label='pre ilt+T500', color='purple', linewidth=1.5, linestyle = '--')
-    plt.plot(trend_preeesc, mY, label='pre ilt+T100', color='magenta', linewidth=1.5, linestyle = '--')
-    plt.plot(trend_preAO, mY, label='pre ilt+AO', color='darkorange', linewidth=1.5, linestyle = ':')
-    plt.plot(trend_pre, mY, label='pre all', color='gold', linewidth=1.5,linestyle='--')
+# ## step by step different order
+# plt.plot(trend_preilt,mY, label='pre ilt',color='red',linewidth=2.0)
+# plt.plot(trend_preEA,mY,label='pre ilt+T100',color='indianred',linewidth=3.0,linestyle=':')
+# plt.plot(trend_preNOI,mY,label='pre ilt+T100+AO',color='darkred',linewidth=3.0,linestyle=':')
+# plt.plot(trend_preAO,mY,label='pre ilt+T100+AO+EAWR',color='purple',linewidth=3.0,linestyle=':')
+# plt.plot(trend_preeesc,mY,label='pre ilt+T100+AO+EAWR+NAO',color='magenta',linewidth=2.0,linestyle=':')
+# plt.plot(trend_preAOD,mY,label='pre ilt+T100+AO+EAWR+NAO+T500',color='gold',linewidth=2,linestyle=':')
+# # plt.plot(trend_pre,mY,label='pre all',color='gold',linewidth=2.0,linestyle='--')
+#
+# plt.plot(trend_postilt,mY,label='post ilt',color='limegreen',linewidth=2.0)
+# plt.plot(trend_postEA,mY,label='post ilt+T100',color='forestgreen',linewidth=3.0,linestyle=':')
+# plt.plot(trend_postNOI,mY,label='post ilt+T100+AO',color='dodgerblue',linewidth=3.0,linestyle=':')
+# plt.plot(trend_postAO,mY,label='post ilt+T100+AO+EAWR',color='blue',linewidth=3.0,linestyle=':')
+# plt.plot(trend_posteesc,mY,label='post ilt+T100+AO+EAWR+NAO',color='cyan',linewidth=3.0,linestyle=':')
+#
+# plt.plot(trend_postAOD,mY,label='post post ilt+T100+AO+EAWR+NAO+T500',color='black',linewidth=2.0,linestyle='--')
+# # plt.plot(trend_post,mY,label='post all',color='black',linewidth=2.0,linestyle='--')
+# #
 
-    eb2 = ax.errorbar(trend_postilt,mY,xerr=trend_post_errilt,label='post ilt',color='limegreen',linewidth=1.5,
-                      elinewidth=0.5,capsize=1.5,capthick=1)
-    eb2[-1][0].set_linestyle('--')
-    plt.plot(trend_postEA, mY, label='post ilt+EAWR', color='forestgreen',linewidth = 1.5, linestyle = '--')
-    plt.plot(trend_postNOI, mY, label='post ilt+NAO', color='dodgerblue', linewidth = 1.5, linestyle = ':')
-    plt.plot(trend_postAOD, mY, label='post ilt+T500', color='royalblue', linewidth=1.5, linestyle = '--')
-    plt.plot(trend_posteesc, mY, label='post ilt+T100', color='cyan', linewidth=1.5, linestyle = '--')
-    plt.plot(trend_postAO, mY, label='post ilt+AO', color='blue', linewidth=1.5, linestyle = ':')
-    plt.plot(trend_post, mY, label='post all', color='black', linewidth=1.5, linestyle = '--')
+## step by step
+plt.plot(trend_preilt,mY, label='pre ilt',color='red',linewidth=2.0)
+plt.plot(trend_preEA,mY,label='pre ilt+EAWR',color='indianred',linewidth=2.0,linestyle='--')
+plt.plot(trend_preNOI,mY,label='pre ilt+EAWR+NAO',color='darkred',linewidth=2.0,linestyle=':')
+plt.plot(trend_preAO,mY,label='pre ilt+EAWR+NAO+AO',color='darkorange',linewidth=2.0,linestyle=':')
+plt.plot(trend_preeesc,mY,label='pre ilt+EAWR+NAO+AO+T100',color='magenta',linewidth=2.0,linestyle='--')
+plt.plot(trend_preAOD,mY,label='pre ilt+EAWR+NAO+AO+T100+T500',color='gold',linewidth=2,linestyle=':')
+# plt.plot(trend_pre,mY,label='pre all',color='gold',linewidth=2.0,linestyle='--')
+
+plt.plot(trend_postilt,mY,label='post ilt',color='limegreen',linewidth=2.0)
+plt.plot(trend_postEA,mY,label='post ilt+EAWR',color='forestgreen',linewidth=2.0,linestyle='--')
+plt.plot(trend_postNOI,mY,label='post ilt+EAWR+NAO',color='dodgerblue',linewidth=2.0,linestyle=':')
+plt.plot(trend_postAO,mY,label='post ilt+EAWR+NAO+AO',color='blue',linewidth=2.0,linestyle=':')
+plt.plot(trend_posteesc,mY,label='post ilt+EAWR+NAO+AO+T100',color='cyan',linewidth=2.0,linestyle='--')
+
+plt.plot(trend_postAOD,mY,label='post ilt+EAWR+NAO+AO+T100+T500',color='black',linewidth=2.0,linestyle='--')
+# # plt.plot(trend_post,mY,label='post all',color='black',linewidth=2.0,linestyle='--')
+# #
 
 
+
+##one by one
+
+# eb1=ax.errorbar(trend_preilt,mY,xerr=trend_pre_errilt,label='pre ilt',color='red',linewidth=1.5,
+#                 elinewidth=0.5,capsize=1.5,capthick=1)
+# eb1[-1][0].set_linestyle('--')
+#
+# plt.plot(trend_preEA,mY,label='pre ilt+EAWR',color='indianred',linewidth=1.5,linestyle='--')
+# plt.plot(trend_preNOI,mY,label='pre ilt+NAO',color='darkred',linewidth=1.5,linestyle=':')
+# plt.plot(trend_preAOD,mY,label='pre ilt+T500',color='purple',linewidth=1.5,linestyle='--')
+# plt.plot(trend_preeesc,mY,label='pre ilt+T100',color='magenta',linewidth=1.5,linestyle='--')
+# plt.plot(trend_preAO,mY,label='pre ilt+AO',color='darkorange',linewidth=1.5,linestyle=':')
+# plt.plot(trend_pre,mY,label='pre all',color='gold',linewidth=1.5,linestyle='--')
+#
+# eb2=ax.errorbar(trend_postilt,mY,xerr=trend_post_errilt,label='post ilt',color='limegreen',linewidth=1.5,
+#                 elinewidth=0.5,capsize=1.5,capthick=1)
+# eb2[-1][0].set_linestyle('--')
+# plt.plot(trend_postEA,mY,label='post ilt+EAWR',color='forestgreen',linewidth=1.5,linestyle='--')
+# plt.plot(trend_postNOI,mY,label='post ilt+NAO',color='dodgerblue',linewidth=1.5,linestyle=':')
+# plt.plot(trend_postAOD,mY,label='post ilt+T500',color='royalblue',linewidth=1.5,linestyle='--')
+# plt.plot(trend_posteesc,mY,label='post ilt+T100',color='cyan',linewidth=1.5,linestyle='--')
+# plt.plot(trend_postAO,mY,label='post ilt+AO',color='blue',linewidth=1.5,linestyle=':')
+# plt.plot(trend_post,mY,label='post all',color='black',linewidth=1.5,linestyle='--')
 
 #plt.plot(trend_postAOD, mY, label='post AOD', color='green')
 
-ax.legend(loc='lower left', frameon=True, fontsize='small')
+ax.legend(loc='lower left', frameon=True, fontsize='xx-small')
 
 
 plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle_' + plname + '.pdf')
