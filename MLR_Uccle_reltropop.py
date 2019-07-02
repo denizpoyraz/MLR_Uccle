@@ -36,7 +36,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
 
 # part for using extended predictors
-pre_name = 'Ilt'
+pre_name = 'ilt_RelTropop'
 plname = 'Trend_' + pre_name
 tag = ''
 
@@ -86,15 +86,15 @@ removep = list(setp.difference(setu))
 removeu = list(setu.difference(setp))
 
 
-# uccle = uccle.drop(removeu)
-# print('after uccle', len(uccle))
-#
-# for j in range(len(removep)):
-#     removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
-#
-#
-# predictors = predictors.drop(removep)
-# print('after pre', len(predictors))
+uccle = uccle.drop(removeu)
+print('after uccle', len(uccle))
+
+for j in range(len(removep)):
+    removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
+
+
+predictors = predictors.drop(removep)
+print('after pre', len(predictors))
 
 
 
@@ -233,7 +233,7 @@ eb2[-1][0].set_linestyle('--')
 
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
-plname = plname + "_reltropop"
+plname = plname
 plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle_' + plname + '.pdf')
 plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle_' + plname + '.eps')
 

@@ -33,9 +33,10 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
 ######################################################################################################################
 
+reltropop = True
 
 # part for using extended predictors
-pre_name = 'NewPredictors_Troposphere_ByStep_RelTropop'
+pre_name = 'NewPredictors_Troposphere_ByOne_RelTropop'
 plname = 'Trend_' + pre_name
 tag = ''
 # predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
@@ -64,12 +65,12 @@ setu = set(uccle.date.tolist())
 # pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 #
-# # remove uccle missing dates:  Abs
+# # # remove uccle missing dates:  Abs
 # difup = setp.symmetric_difference(setu)
 # diup = list(difup)
 # uccle = uccle.drop(diup)
 
-# remove  missing dates: reltropop
+# # remove  missing dates: reltropop
 removep = list(setp.difference(setu))
 removeu = list(setu.difference(setp))
 uccle = uccle.drop(removeu)
@@ -89,10 +90,16 @@ ucm = {}
 mY = []
 ut = [0] * 36
 
+# ## predictors stepbystep
+# predictorsilt = predictors.drop(columns=['AO', 'pre_tropop', 'temp_sur', 'NOI','EA'])
+# predictorsNOI = predictors.drop(columns=['AO', 'pre_tropop', 'temp_sur','EA'])
+# predictorstempsur = predictors.drop(columns=['AO', 'pre_tropop','EA'])
+
+## predictors one each time
 predictorsilt = predictors.drop(columns=['AO', 'pre_tropop', 'temp_sur', 'NOI','EA'])
 predictorsNOI = predictors.drop(columns=['AO', 'pre_tropop', 'temp_sur','EA'])
-predictorstempsur = predictors.drop(columns=['AO', 'pre_tropop','EA'])
-predictorstropop = predictors.drop(columns=['pre_tropop', "EA", 'AO'])
+predictorstempsur = predictors.drop(columns=['AO', 'pre_tropop', 'NOI','EA'])
+predictorstropop = predictors.drop(columns=['AO', 'pre_tropop', 'EA'])
 
 regression_outputilt = [0] * 36
 uXilt = [0] * 36
@@ -137,7 +144,7 @@ trend_post_errNOI = [0] * 36
 ##
 
 
-
+## reltroopop
 for i in range(-11, 25, 1):
     #reltropop
     akm = i
@@ -145,10 +152,14 @@ for i in range(-11, 25, 1):
     mY.append(akm)
     alt_ds[i] = str(akm) + 'km_ds'
     alt[i] = str(akm) + 'km'
+# abs altitude
+# for i in range(36):
+#     # reltropop
+#     mY.append(i)
+#     alt_ds[i] = str(i) + 'km_ds'
+#     alt[i] = str(i) + 'km'
 
-    # mY.append(i)
-    # alt_ds[i] = str(i) + 'km_ds'
-    # alt[i] = str(i) + 'km'
+
 
     uc[i] = uccle
     uct[i] = uc[i]
@@ -208,8 +219,6 @@ for i in range(-11, 25, 1):
     trend_post_errtempsur[i] = 2 * trend_post_errtempsur[i] * 100
 
 
-
-    ## surface temperature
     predictorstropop, uct[i] = pd.DataFrame.align(predictorstropop, uct[i], axis=0)
     uYtropop[i] = uct[i][alt_ds[i]].values
     uXtropop[i] = predictorstropop.values
@@ -241,9 +250,9 @@ fig, ax = plt.subplots()
 plt.title('Uccle 1969-2018')
 plt.xlabel('Ozone trend [%/dec]')
 plt.ylabel('Altitude [km]')
-plt.xlim(-10, 10)
-# plt.ylim(0,36)
-plt.ylim(-12,25)
+plt.xlim(-12, 12)
+if reltropop: plt.ylim(-12,25)
+else: plt.ylim(0,36)
 
 ax.axvline(x=0, color='grey', linestyle='--')
 ax.axhline(y=0, color='grey', linestyle=':')
@@ -257,37 +266,41 @@ ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax.set_xticks([-10,-5,0,5,10])
 
 
+# step by step
+# eb0 = ax.errorbar(trend_preilt, mY, xerr=trend_pre_errilt, label='pre ilt', color='red', linewidth= 1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb0[-1][0].set_linestyle('--')
+#
+# plt.plot(trend_preNOI, mY, label='pre ilt+NOI', color='purple', linewidth = 1.5, linestyle = ':')
+# plt.plot(trend_pretempsur, mY, label='pre ilt+NOI+temp. sur.', color='gold', linewidth = 2, linestyle = '--')
 
-#plt.plot(trend_preilt, mY, label='pre ilt', color='red')
-eb0 = ax.errorbar(trend_preilt, mY, xerr=trend_pre_errilt, label='pre ilt', color='red', linewidth= 0.75,
+eb0 = ax.errorbar(trend_preilt, mY, xerr=trend_pre_errilt, label='pre ilt', color='red', linewidth= 1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb0[-1][0].set_linestyle('--')
 
-plt.plot(trend_preNOI, mY, label='pre NOI', color='salmon', linewidth = 1.5, linestyle = ':')
-plt.plot(trend_pretempsur, mY, label='pre tempsur', color='purple', linewidth = 1.5, linestyle = '--')
+plt.plot(trend_preNOI, mY, label='pre ilt+NOI', color='purple', linewidth = 1.5, linestyle = '--')
+plt.plot(trend_pretempsur, mY, label='pre ilt+temp. sur.', color='salmon', linewidth = 1.5, linestyle = ':')
+plt.plot(trend_pretropop, mY, label='pre all', color='gold', linewidth = 2, linestyle = "--")
 
-
-# plt.plot(trend_pretropop, mY, label='pre all', color='gold', linewidth = 4, linestyle = "--")
-# eb1 = ax.errorbar(trend_pretropop, mY, xerr=trend_pre_errtropop, label='pre all', color='gold', linewidth=2,
+# ## step by step
+# eb3 = ax.errorbar(trend_postilt, mY, xerr=trend_post_errilt, label='post ilt', color='limegreen', linewidth= 1.5,
 #             elinewidth=0.5, capsize=1.5, capthick=1)
-# eb1[-1][0].set_linestyle('--')
+# eb3[-1][0].set_linestyle('--')
+# # plt.plot(trend_postilt, mY, label='post ilt', color='limegreen')
+# plt.plot(trend_postNOI, mY, label='post ilt+NOI', color='blue', linewidth = 1.5, linestyle = ':')
+#
+# plt.plot(trend_posttempsur, mY, label='post ilt+NOI+temp. sur.', color='black', linewidth = 1.5, linestyle = '--')
 
-#plt.plot(trend_preAOD, mY, label='pre tempsur', color='gold')
-
-
-eb3 = ax.errorbar(trend_postilt, mY, xerr=trend_post_errilt, label='post ilt', color='limegreen', linewidth= 1,
+eb3 = ax.errorbar(trend_postilt, mY, xerr=trend_post_errilt, label='post ilt', color='limegreen', linewidth= 1.5,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb3[-1][0].set_linestyle('--')
 # plt.plot(trend_postilt, mY, label='post ilt', color='limegreen')
-plt.plot(trend_postNOI, mY, label='post NOI', color='dodgerblue', linewidth = 1.5, linestyle = ':')
+plt.plot(trend_postNOI, mY, label='post ilt+NOI', color='blue', linewidth = 1.5, linestyle = '--')
 
-plt.plot(trend_posttempsur, mY, label='post tempsur', color='blue', linewidth = 1.5, linestyle = '--')
+plt.plot(trend_posttempsur, mY, label='post ilt+temp. sur.', color='cyan', linewidth = 1.5, linestyle = ':')
 
-plt.plot(trend_posttropop, mY, label='post pressure tropop', color='black', linewidth = 1.5, linestyle = '--')
+plt.plot(trend_posttropop, mY, label='post all', color='black', linewidth = 1.5, linestyle = '--')
 
-# eb2 = ax.errorbar(trend_posttropop, mY, xerr=trend_post_errtropop, label='post all', color='black', linewidth=1,
-#             elinewidth=0.5, capsize=1.5, capthick=1)
-# eb2[-1][0].set_linestyle('--')
 
 ax.legend(loc='lower left', frameon=True, fontsize='small')
 

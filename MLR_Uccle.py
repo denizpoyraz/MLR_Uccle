@@ -38,7 +38,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
 
 # part for using extended predictors
-pre_name = 'Ilt'
+pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
