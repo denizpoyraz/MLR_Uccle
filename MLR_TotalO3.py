@@ -29,8 +29,9 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    plt.show()
     plt.close()
     plt.close()
 
@@ -55,8 +56,9 @@ def plotresidual(pX, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    plt.show()
     plt.close()
     plt.close()
 
@@ -69,10 +71,10 @@ pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
-predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
 
 # try new predictors
-# predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors= pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
 setp = set(predictors['Unnamed: 0'].tolist())
 
@@ -83,7 +85,7 @@ predictors.set_index('date', inplace=True)
 # For Brewer Mast
 predictors = predictors.loc['1971-07-01':'2018-12-01']
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
 
 
 

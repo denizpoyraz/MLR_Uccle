@@ -8,7 +8,7 @@ import dateutil.parser
 # Code to read data and convert it to a format I can analyze
 # DEBilt
 
-df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone.txt',  sep = "\s *", engine="python", names = ['jdate','mean', 'anamoly'])
+df = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/TotalOzone.txt',  sep = "\s *", engine="python", names = ['jdate','mean', 'anamoly'])
 
 
 julian_dates = df.jdate.tolist()
@@ -33,4 +33,11 @@ df['date'] = dates
 print(list(df))
 
 
-df.to_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+df['dateindex'] = pd.to_datetime(df['date'], format='%Y-%m')
+df.set_index('date', inplace=True)
+print('df', len(df), list(df))
+
+df['monthly_mean'] = df['mean'] - df['anamoly']
+df['rel_anamoly'] = (df['mean'] - df['monthly_mean'])/ df['monthly_mean']
+
+df.to_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
