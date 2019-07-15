@@ -22,7 +22,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     plt.title(pltitle)
     plt.xlabel('Years')
     # plt.ylabel('Residuals')
-    plt.ylabel('PO3 (hPa)')
+    plt.ylabel('Relative Monthly Mean')
 
     # plt.plot(pX, pY, label='Residuals', color='blue')
     plt.plot(pX, pY, label='Data', color='blue')
@@ -31,8 +31,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
-    plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
     # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
     # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
     # plt.close()
@@ -47,28 +47,49 @@ pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
-predictors = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/Extended_ilt.csv')
+# predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors=pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
 
 # try new predictors
-# predictors= pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
-setp = set(predictors['Unnamed: 0'].tolist())
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+setp = set(predictors.date.tolist())
+
 predictors.set_index('date', inplace=True)
 
 # For Brewer Mast
 predictors = predictors.loc['1971-07-01':'2018-12-01']
 
-uccle = pd.read_csv('/Volumes/HD3/KMI/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+
+
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
+setu = set(uccle.date.tolist()) # for totalcolumn predictors
+
+print('setu', len(setu), setu)
+print('setp', len(setp), setp)
+
+
 uccle.set_index('date', inplace=True)
-uccle['dateindex'] = pd.to_datetime(uccle['dateindex'], format='%Y-%m')
+# uccle['dateindex'] = pd.to_datetime(uccle['dateindex'], format='%Y-%m')
+
+# only for total column ilt
+removep = list(setp.difference(setu))
+removeu = list(setu.difference(setp))
+print('removep',len(removep), removep)
+
+print('removeu',len(removeu), removeu)
+uccle = uccle.drop(removeu)
 
 
+uccle['monthly_mean'] = uccle['mean'] - uccle['anamoly']
+uccle['rel_anamoly'] = (uccle['mean'] - uccle['monthly_mean'])/ uccle['monthly_mean']
 
-print(uccle.index)
+
+print(uccle.index, len(uccle), len(predictors))
 
 
 alt = [''] * 36
@@ -133,7 +154,7 @@ for i in range(12):
 
 
     # plotmlr_perkm(uct[i].dateindex, regression_output[i]['residual'], regression_output[i]['fit_values'], ptitle, pname)
-    plotmlr_perkm(uct[i].dateindex, uY[i], regression_output[i]['fit_values'], ptitle, pname)
+    plotmlr_perkm(uct[i].index, uY[i], regression_output[i]['fit_values'], mstr[i], pname)
 
     trend_pre[i] = param_list[i]['linear_pre']
     trend_pre_err[i] = error_list[i]['linear_pre']
@@ -187,7 +208,8 @@ ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 #
 
 
-#
+mstr = [1,2,3,4,5,6,7,8,9,10,11,12]
+
 eb1 = ax.errorbar(mstr, trend_pre, yerr=trend_pre_err, label='pre-1997', color='red', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb1[-1][0].set_linestyle('--')
@@ -208,11 +230,11 @@ ax.set_xticklabels(ticklabels) #add monthlabels to the xaxis
 
 
 ax.legend(loc='upper right', frameon=True, fontsize='small')
-plt.show()
 
 #
 # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
 # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/TotalO3/Trend_monthly_year.pdf')
-plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/TotalO3/Trend_monthly_year.eps')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.pdf')
+plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.eps')
 # plt.close()
+plt.show()

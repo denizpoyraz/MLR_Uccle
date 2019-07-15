@@ -202,6 +202,7 @@ for i in range(nkm):
 
     trend_posti[i] = param_listi[i]['linear_post']
     trend_post_erri[i] = error_listi[i]['linear_post']
+
     # for % in decade for relative montly anamoly
     trend_posti[i] = trend_posti[i] * 100
     trend_post_erri[i] = 2 * trend_post_erri[i] * 100
