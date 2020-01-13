@@ -101,7 +101,7 @@ def load_enso(lag_months=0):
     # data = pd.read_table('https://www.esrl.noaa.gov/psd/enso/mei/data/meiv2.data', skiprows=1, skipfooter=4, sep='\s+',
     #                     index_col=0, engine='python', header=None)
 
-    data = pd.read_table('/home/poyraden/MLR_Uccle/Files/enso_mei.dat', skiprows=1, sep='\s+',index_col=0,
+    data = pd.read_table('/home/poyraden/Analysis/MLR_Uccle/Files/enso_mei.dat', skiprows=1, sep='\s+',index_col=0,
                          engine='python', header=None)
 
     assert (data.index[0] == 1969)
@@ -284,6 +284,6 @@ predictors_uccle['solar'] = norsolar
 predictors_uccle['AOD'] = aod_nor
 
 
-predictors_uccle.to_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors_uccle.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_recap.csv')
 
 

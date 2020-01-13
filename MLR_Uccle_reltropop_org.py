@@ -27,8 +27,8 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
 
-    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Residuals/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Residuals/' + plname + '.eps')
     plt.close()
 
 
@@ -40,21 +40,27 @@ pre_name = 'ilt_RelTropop'
 plname = 'Trend_' + pre_name
 tag = ''
 
-predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
-predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
-predictors.set_index('date', inplace=True)
+# predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+# predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+# predictors.set_index('date', inplace=True)
 #
 
 
 # try new predictors
 
 # predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
-# setp = set(predictors['Unnamed: 0'].tolist())
-#
-# predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m-%d')
-# predictors.set_index('date', inplace=True)
+predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+
+
+setp = set(predictors['Unnamed: 0'].tolist())
+
+
+predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m-%d') ## for new predictors
+predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m') ## for extended ilt
+
+predictors.set_index('date', inplace=True)
 
 
 
@@ -77,19 +83,26 @@ uccle.set_index('date', inplace=True)
 
 print('predictors', len(predictors), list(predictors))
 
-# new predictors
 # remove uccle missing dates:
-# print('setp.difference(setu)', setp.difference(setu))
-# print('setu.difference(setp)', setu.difference(setp))
-# removep = list(setp.difference(setu))
-# removeu = list(setu.difference(setp))
-# uccle = uccle.drop(removeu)
-# print('after uccle', len(uccle))
-# for j in range(len(removep)):
-#     removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
-# predictors = predictors.drop(removep)
-# print('after pre', len(predictors))
-#
+
+print('setp.difference(setu)', setp.difference(setu))
+print('setu.difference(setp)', setu.difference(setp))
+
+removep = list(setp.difference(setu))
+removeu = list(setu.difference(setp))
+
+
+uccle = uccle.drop(removeu)
+print('after uccle', len(uccle))
+
+for j in range(len(removep)):
+    # removep[j] = datetime.strptime(removep[j], '%Y-%m-%d') ## for new predictors
+    removep[j] = datetime.strptime(removep[j], '%Y-%m') ## for extended
+
+
+predictors = predictors.drop(removep)
+print('after pre', len(predictors))
+
 
 
 alt = [''] * 36
@@ -228,8 +241,8 @@ eb2[-1][0].set_linestyle('--')
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle_' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle_' + plname + '.eps')
 
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')

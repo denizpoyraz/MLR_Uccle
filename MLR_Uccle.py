@@ -28,9 +28,9 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
-    plt.close()
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    plt.show()
     plt.close()
 
 
@@ -42,10 +42,10 @@ pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
-predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
 
 # try new predictors
-# predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
 setp = set(predictors['Unnamed: 0'].tolist())
 
@@ -56,8 +56,8 @@ predictors.set_index('date', inplace=True)
 # For DeBilt
 # predictors = predictors.loc['1992-11-01':'2018-12-01']
 
-if reltropop: uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
-else: uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
+if reltropop: uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+else: uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_all_relative.csv')
 
 setu = set(uccle.date.tolist())
 
@@ -176,8 +176,9 @@ eb2[-1][0].set_linestyle('--')
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
 # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+plt.show()
 plt.close()
