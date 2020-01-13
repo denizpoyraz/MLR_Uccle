@@ -48,7 +48,8 @@ predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 # For DeBilt
-predictors = predictors.loc['2000-01-01':'2018-12-01']
+predictorsd = predictors.loc['2000-01-01':'2018-12-01']
+predictorsu = predictors.loc['2000-01-01':'2018-12-01']
 
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_deas_relative.csv')
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
@@ -60,8 +61,8 @@ pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 uccle = uccle.loc['2000-01-01':'2018-12-01']
 
-# debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
-debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
+debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
+# debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
 debilt.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(debilt['date'], format='%Y-%m')
@@ -77,14 +78,12 @@ alt = [''] * 36
 # uct = pd.DataFrame()
 ud = {}
 udt = {}
-udm = {}
 
 regression_output = [0] * 36
 uX = [0] * 36
 uY = [0] * 36
 param_list = [0] * 36
 error_list = [0] * 36
-utd = [0] * 36
 
 trend_post = [0] * 36
 trend_post_err = [0] * 36
@@ -92,14 +91,12 @@ trend_post_err = [0] * 36
 #uccle
 uc = {}
 uct = {}
-ucm = {}
 
 regression_outputu= [0] * 36
 uXu = [0] * 36
 uYu = [0] * 36
 param_listu = [0] * 36
 error_listu = [0] * 36
-utc = [0] * 36
 
 trend_postu = [0] * 36
 trend_post_erru = [0] * 36
@@ -125,18 +122,17 @@ for i in range(24,-12,-1):
     udt[i] = debilt
     #.loc['2000-01-01':'2018-12-01']
 
-    predictors, udt[i] = pd.DataFrame.align(predictors, udt[i], axis=0)
+    predictorsd, udt[i] = pd.DataFrame.align(predictorsd, udt[i], axis=0)
 
     uY[i] = udt[i][alt[i]].values
-    uX[i] = predictors.values
+    uX[i] = predictorsd.values
 
     regression_output[i] = mzm_regression(uX[i], uY[i])
-    param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
-    print('one', param_list[i])
+    param_list[i] = dict(zip(list(predictorsd), regression_output[i]['gls_results'].params))
+    # print('one', param_list[i])
 
-    error_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].bse))
+    error_list[i] = dict(zip(list(predictorsd), regression_output[i]['gls_results'].bse))
 
-    utd[i] = udt[i].index
     ptitle = str(alt[i])
     pname = 'DeBilt_' + pre_name + tag + str(alt[i])
     #plotmlr_perkm(udt[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
@@ -153,16 +149,15 @@ for i in range(24,-12,-1):
     uct[i] = uccle
     #.loc['2000-01-01':'2018-12-01']
 
-    predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
+    predictorsu, uct[i] = pd.DataFrame.align(predictorsu, uct[i], axis=0)
 
     uYu[i] = uct[i][alt[i]].values
-    uXu[i] = predictors.values
+    uXu[i] = predictorsu.values
 
     regression_outputu[i] = mzm_regression(uXu[i], uYu[i])
-    param_listu[i] = dict(zip(list(predictors), regression_outputu[i]['gls_results'].params))
-    error_listu[i] = dict(zip(list(predictors), regression_outputu[i]['gls_results'].bse))
+    param_listu[i] = dict(zip(list(predictorsu), regression_outputu[i]['gls_results'].params))
+    error_listu[i] = dict(zip(list(predictorsu), regression_outputu[i]['gls_results'].bse))
 
-    utc[i] = uct[i].index
     ptitle = str(alt[i])
     pname = 'Uccle_' + pre_name + tag + str(alt[i])
     #plotmlr_perkm(uct[i], uYu[i], regression_outputu[i]['fit_values'], ptitle, pname)
@@ -191,7 +186,7 @@ plt.xlabel('Ozone Trend (%/dec)')
 plt.ylabel('Altitude relative to the tropopause [km]')
 
 plt.xlim(-10, 12)
-plt.ylim(-10,23)
+plt.ylim(-12,23)
 
 # plt.ylim(0, 33)
 

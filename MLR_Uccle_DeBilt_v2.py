@@ -8,6 +8,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+## second version of the code to make trend plot of DeBilt from 1992 only post trend and Uccle all range pre and post
+## trends
+
+
 def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
     plt.close('all')
 
@@ -47,18 +51,24 @@ predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
+
+predictorsd = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+
+predictorsd.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
+predictorsd['date'] = pd.to_datetime(predictorsd['date'], format='%Y-%m')
+predictorsd.set_index('date', inplace=True)
 # For DeBilt
-predictors = predictors.loc['2000-01-01':'2018-12-01']
+predictorsd = predictors.loc['1992-12-01':'2018-12-01']
 
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_deas_relative.csv')
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
 uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
 
+
 #
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
-uccle = uccle.loc['2000-01-01':'2018-12-01']
 
 debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
 # debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
@@ -66,7 +76,8 @@ debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthly
 debilt.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(debilt['date'], format='%Y-%m')
 debilt.set_index('date', inplace=True)
-debilt = debilt.loc['2000-01-01':'2018-12-01']
+# debilt = debilt.loc['2000-01-01':'2018-12-01']
+# debilt = debilt.loc['1992-12-01':'2018-12-01']
 
 print(debilt.index)
 print(list(uccle))
@@ -77,14 +88,12 @@ alt = [''] * 36
 # uct = pd.DataFrame()
 ud = {}
 udt = {}
-udm = {}
 
 regression_output = [0] * 36
 uX = [0] * 36
 uY = [0] * 36
 param_list = [0] * 36
 error_list = [0] * 36
-utd = [0] * 36
 
 trend_post = [0] * 36
 trend_post_err = [0] * 36
@@ -92,17 +101,18 @@ trend_post_err = [0] * 36
 #uccle
 uc = {}
 uct = {}
-ucm = {}
 
 regression_outputu= [0] * 36
 uXu = [0] * 36
 uYu = [0] * 36
 param_listu = [0] * 36
 error_listu = [0] * 36
-utc = [0] * 36
 
 trend_postu = [0] * 36
 trend_post_erru = [0] * 36
+
+trend_preu = [0] * 36
+trend_pre_erru = [0] * 36
 
 mY = []
 
@@ -119,39 +129,37 @@ print('mY', mY)
 #     mY.append(i)
 for i in range(24,-12,-1):
 
-    alt[i] = str(i) + 'km_ds'
+    # alt[i] = str(i) + 'km_ds'
 
-    #debilt
-    udt[i] = debilt
-    #.loc['2000-01-01':'2018-12-01']
-
-    predictors, udt[i] = pd.DataFrame.align(predictors, udt[i], axis=0)
-
-    uY[i] = udt[i][alt[i]].values
-    uX[i] = predictors.values
-
-    regression_output[i] = mzm_regression(uX[i], uY[i])
-    param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
-    print('one', param_list[i])
-
-    error_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].bse))
-
-    utd[i] = udt[i].index
-    ptitle = str(alt[i])
-    pname = 'DeBilt_' + pre_name + tag + str(alt[i])
-    #plotmlr_perkm(udt[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
-
-    trend_post[i] = param_list[i]['linear_post']
-    trend_post_err[i] = error_list[i]['linear_post']
-
-
-    # for % in decade for relative montly anamoly
-    trend_post[i] = trend_post[i] * 100
-    trend_post_err[i] = 2 * trend_post_err[i] * 100
+    # #debilt
+    # udt[i] = debilt
+    # #.loc['2000-01-01':'2018-12-01']
+    #
+    # predictorsd, udt[i] = pd.DataFrame.align(predictorsd, udt[i], axis=0)
+    #
+    # uY[i] = udt[i][alt[i]].values
+    # uX[i] = predictorsd.values
+    #
+    # regression_output[i] = mzm_regression(uX[i], uY[i])
+    # param_list[i] = dict(zip(list(predictorsd), regression_output[i]['gls_results'].params))
+    # # print('one', param_list[i])
+    #
+    # error_list[i] = dict(zip(list(predictorsd), regression_output[i]['gls_results'].bse))
+    #
+    # ptitle = str(alt[i])
+    # pname = 'DeBilt_' + pre_name + tag + str(alt[i])
+    # #plotmlr_perkm(udt[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
+    #
+    # trend_post[i] = param_list[i]['linear_post']
+    # trend_post_err[i] = error_list[i]['linear_post']
+    #
+    #
+    # # for % in decade for relative montly anamoly
+    # trend_post[i] = trend_post[i] * 100
+    # trend_post_err[i] = 2 * trend_post_err[i] * 100
 
     #uccle
     uct[i] = uccle
-    #.loc['2000-01-01':'2018-12-01']
 
     predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
 
@@ -162,7 +170,6 @@ for i in range(24,-12,-1):
     param_listu[i] = dict(zip(list(predictors), regression_outputu[i]['gls_results'].params))
     error_listu[i] = dict(zip(list(predictors), regression_outputu[i]['gls_results'].bse))
 
-    utc[i] = uct[i].index
     ptitle = str(alt[i])
     pname = 'Uccle_' + pre_name + tag + str(alt[i])
     #plotmlr_perkm(uct[i], uYu[i], regression_outputu[i]['fit_values'], ptitle, pname)
@@ -170,16 +177,23 @@ for i in range(24,-12,-1):
     trend_postu[i] = param_listu[i]['linear_post']
     trend_post_erru[i] = error_listu[i]['linear_post']
 
+    trend_preu[i] = param_listu[i]['linear_pre']
+    trend_pre_erru[i] = error_listu[i]['linear_pre']
+
     # for % in decade for relative montly anamoly
     trend_postu[i] = trend_postu[i] * 100
     trend_post_erru[i] = 2 * trend_post_erru[i] * 100
+
+    trend_preu[i] = trend_preu[i] * 100
+    trend_pre_erru[i] = 2 * trend_pre_erru[i] * 100
 
 # for monthly anamoly
     # trend_post[i] = trend_post[i] * 100 / (mean_post[i] * 10)
     # trend_post_err[i] = 2 * trend_post_err[i] * 100 / (mean_post[i] * 10)
     # trend_post[i] = trend_post[i] * 100 / (mean_post[i] * 10)
     # trend_post_err[i] = 2 * trend_post_err[i] * 100 / (mean_post[i] * 10)
-print('debilt', trend_post)
+
+# print('debilt', trend_post)
 print('uccle', trend_postu)
 
 plt.close('all')
@@ -191,7 +205,7 @@ plt.xlabel('Ozone Trend (%/dec)')
 plt.ylabel('Altitude relative to the tropopause [km]')
 
 plt.xlim(-10, 12)
-plt.ylim(-10,23)
+plt.ylim(-12,25)
 
 # plt.ylim(0, 33)
 
@@ -206,17 +220,23 @@ ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax.set_xticks([-10,-5,0,5,10])
 
 
-eb1 = ax.errorbar(trend_postu, mY, xerr=trend_post_erru, label='Uccle 2000-2018', color='limegreen', linewidth=1,
-            elinewidth=0.5, capsize=1.5, capthick=1)
-eb1[-1][0].set_linestyle('--')
-eb2 = ax.errorbar(trend_post, mY, xerr=trend_post_err, label='DeBilt 2000-2018', color='blue', linewidth=1,
-            elinewidth=0.5, capsize=1.5, capthick=1)
-eb2[-1][0].set_linestyle('--')
 
-ax.legend(loc='lower left', frameon=True, fontsize='small')
-
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + '.pdf')
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + '.eps')
+#
+#
+# eb3 = ax.errorbar(trend_preu, mY, xerr=trend_pre_erru, label='Uccle 1969-1996', color='red', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb3[-1][0].set_linestyle('--')
+# eb1 = ax.errorbar(trend_postu, mY, xerr=trend_post_erru, label='Uccle 2000-2018', color='limegreen', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb1[-1][0].set_linestyle('--')
+# eb2 = ax.errorbar(trend_post, mY, xerr=trend_post_err, label='DeBilt 1992-2018', color='blue', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb2[-1][0].set_linestyle('--')
+#
+# ax.legend(loc='lower left', frameon=True, fontsize='small')
+#
+plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.pdf')
+plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.eps')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')

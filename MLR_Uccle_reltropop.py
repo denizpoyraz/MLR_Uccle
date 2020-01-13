@@ -44,6 +44,8 @@ predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.c
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
+# predictors = predictors.loc['2000-01-01':'2018-12-01']
+
 #
 
 
@@ -65,6 +67,7 @@ predictors.set_index('date', inplace=True)
 
 
 uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
+
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
 print('uccle', len(uccle), list(uccle), uccle.index)
@@ -73,7 +76,12 @@ setu = set(uccle.date.tolist())
 # uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 #uccle['date'] =  dates
 # pd.to_datetime(uccle['date'], format='%Y-%m')
+# uccle.set_index('date', inplace=True)
+
+uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
+pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
+# uccle = uccle.loc['2000-01-01':'2018-12-01']
 
 print('predictors', len(predictors), list(predictors))
 
@@ -124,15 +132,18 @@ for irt in range(24,-12,-1):
     alt[24-irt] = str(irt) + 'km_ds' #w.r.t. tropopause
     mY.append(irt)
 
+print('MY', len(mY), mY)
 
 
-for i in range(36):
+# for i in range(36):
+for i in range(24, -12, -1):
+
+    print(i, mY[i], alt[i])
     uc[i] = uccle
 
+## why these dates 1977?
     # uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
     # uct_post[i] = uc[i].loc['2000-02-01':'2017-06-01']
-
-
     #uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
     uct[i] = uc[i]
 
@@ -169,34 +180,8 @@ for i in range(36):
     trend_post_rel[i] = param_list[i]['linear_post'] *100
     trend_post_err_rel[i] = 2 * error_list[i]['linear_post'] *100
 
+print('uccle', trend_post_rel)
 
-
-# plt.close('all')
-#
-# fig, ax = plt.subplots()
-# plt.title('Uccle Lotus Regression Trends')
-# plt.xlabel('Ozone Trend (%)')
-# plt.ylabel('Altitude relative to the tropopause (km)')
-# plt.xlim(-2,2)
-# ax.axvline(x=0, color='grey', linestyle='--')
-# ax.axhline(y=0, color='grey', linestyle=':')
-#
-#
-#
-# ax.errorbar(trend_pre, mY, xerr= trend_pre_err, label='pre-1997', color='black', linewidth=1,
-#             elinewidth=0.5, capsize=1, capthick=0.5)
-# ax.errorbar(trend_post, mY, xerr= trend_post_err, label='post-2000', color='green', linewidth=1,
-#             elinewidth=0.5, capsize=1, capthick=0.5)
-# ax.legend(loc='upper right', frameon=True, fontsize='small')
-#
-#
-# # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
-#
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
-#
-# plt.close()
 
 plt.close('all')
 

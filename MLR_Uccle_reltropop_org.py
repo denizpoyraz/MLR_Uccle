@@ -49,8 +49,8 @@ tag = ''
 
 # try new predictors
 
-# predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
-predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
 
 
 setp = set(predictors['Unnamed: 0'].tolist())
@@ -96,9 +96,9 @@ uccle = uccle.drop(removeu)
 print('after uccle', len(uccle))
 
 for j in range(len(removep)):
-    # removep[j] = datetime.strptime(removep[j], '%Y-%m-%d') ## for new predictors
-    removep[j] = datetime.strptime(removep[j], '%Y-%m') ## for extended
-
+    removep[j] = datetime.strptime(removep[j], '%Y-%m-%d') ## for new predictors
+    # removep[j] = datetime.strptime(removep[j], '%Y-%m') ## for extended
+#
 
 predictors = predictors.drop(removep)
 print('after pre', len(predictors))
