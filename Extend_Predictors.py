@@ -15,6 +15,34 @@ import xarray as xr
 
 ''' main code from : https://arg.usask.ca/docs/LOTUS_regression/dev/_modules/LOTUS_regression/predictors/download.html'''
 
+########################################################################################################
+
+def load_linear(inflection=1997):
+    """
+    Returns two piecewise linear components with a given inflection point in value / decade.
+
+    Parameters
+    ----------
+    inflection : int, Optional. Default 1997
+    """
+
+    start_year = pd.to_datetime('1969-01-01', format='%Y-%m-%d')
+    end_year = pd.to_datetime('2018-12-01', format='%Y-%m-%d')
+
+    r = relativedelta.relativedelta(end_year, start_year)
+    num_months = r.years * 12 + r.months + 1
+
+    start_year = 1969
+
+    index = pd.date_range('1975-01', periods=num_months, freq='M').to_period(freq='M')
+    pre = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t < 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
+                    name='pre')
+    post = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t > 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
+                     name='post')
+    return pd.concat([pre, post], axis=1)
+
+
+########################################################################################################33#
 def load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01', start_year = '1969-01-01', end_year = '2018-12-01'):
     """
     Creates the predictors required for performing independent linear trends.
@@ -79,12 +107,95 @@ def load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-0
     post_const = pd.Series(post_const, index=index, name='post_const')
     pre_const = pd.Series(pre_const, index=index, name='pre_const')
 
+    # startyear = 1969
+    # inflection = 1997
+    #
+    # indexp = pd.date_range('1969-01', periods=num_months, freq='M').to_period(freq='M')
+    # pre_pw = 1 / 120 * pd.Series(
+    #     [t - 12 * (inflection - (startyear + 1)) if t < 12 * (inflection - (startyear + 1)) else 0 for t in
+    #      range(num_months)], index=indexp,
+    #     name='pwlt_pre')
+    # post_pw = 1 / 120 * pd.Series(
+    #     [t - 12 * (inflection - (startyear + 1)) if t > 12 * (inflection - (startyear + 1)) else 0 for t in
+    #      range(num_months)], index=indexp,
+    #     name='pwlt_post')
+    #
+    # if need_gap_constant:
+    #     data = pd.concat([pre, post, pre_pw, post_pw, post_const, pre_const, gap_constant], axis=1)
+    # else:
+    #     data = pd.concat([pre, post, pre_pw, post_pw, post_const, pre_const], axis=1)
+
     if need_gap_constant:
         data = pd.concat([pre, post, post_const, pre_const, gap_constant], axis=1)
     else:
         data = pd.concat([pre, post, post_const, pre_const], axis=1)
 
     return data
+
+########################################################################################################################
+def load_independent_linear_all(pre_trend_end='1997-01-01', post_trend_start='2000-01-01', start_year = '1969-01-01', end_year = '2018-12-01'):
+
+
+    NS_IN_YEAR = float(31556952000000000)
+
+    start_year = pd.to_datetime('1969-01-01', format='%Y-%m-%d')
+    end_year = pd.to_datetime('1996-12-01', format='%Y-%m-%d')
+    # end_year = pd.to_datetime('2018-12-01', format='%Y-%m-%d')
+
+
+    r = relativedelta.relativedelta(end_year, start_year)
+    num_months = r.years * 12 + r.months + 1
+
+    index = pd.date_range('1969-01-01', periods=num_months, freq='M').to_period(freq='M')
+
+    pre_delta = -1 * (index.to_timestamp() - pd.to_datetime(end_year)).values
+    post_delta = (index.to_timestamp() - pd.to_datetime(end_year)).values
+
+    assert (pre_delta.dtype == np.dtype('<m8[ns]'))
+    assert (post_delta.dtype == np.dtype('<m8[ns]'))
+    ## np.dtype('datetime64[ns]') would equal np.dtype('>M8[ns]')
+
+    # time difference in number of years
+    pre_delta = pre_delta.astype(np.int64) / NS_IN_YEAR
+    post_delta = post_delta.astype(np.int64) / NS_IN_YEAR
+
+    ## always use post, which is a linear increase term))
+    # pre = pd.Series( pre_delta / 10, index=index, name='linear_pre_all')
+    post = pd.Series(post_delta / 10, index=index, name='linear_one')
+
+
+    data = pd.concat([post], axis=1)
+
+
+    return data
+
+#######################################################################################################################
+
+def load_linear(inflection=1997):
+
+    """
+    Returns two piecewise linear components with a given inflection point in value / decade.
+
+    Parameters
+    ----------
+    inflection : int, Optional. Default 1997
+    """
+
+    start_year = pd.to_datetime('1969-01-01', format='%Y-%m-%d')
+    end_year = pd.to_datetime('2018-12-01', format='%Y-%m-%d')
+
+    r = relativedelta.relativedelta(end_year, start_year)
+    num_months = r.years * 12 + r.months + 1
+
+    start_year = 1969
+
+    index = pd.date_range('1969-01', periods=num_months, freq='M').to_period(freq='M')
+    pre = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t < 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
+                    name='pwlt_pre')
+    post = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t > 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
+                     name='pwlt_post')
+    return pd.concat([pre, post], axis=1)
+
 
 def load_enso(lag_months=0):
 
@@ -249,7 +360,9 @@ def load_giss_aod():
 
 # now make the dataframe for predictors
 
-linear_trends = load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
+# linear_trends = load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
+linear_trends = load_independent_linear_all(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
+# linear_trends = load_linear(inflection=1997)
 # print('linear trend', list(linear_trends))
 enso = load_enso(lag_months= 0 )
 # print('enso', type(enso), list(enso))
@@ -275,7 +388,12 @@ solar = solar.append(solar2)
 solar['nor'] = (solar.solar_mm - np.mean(solar.solar_mm))/np.std(solar.solar_mm)
 norsolar = solar.nor.tolist()
 
-predictors_uccle = linear_trends
+# predictors_uccle = linear_trends
+## for one linear predictor
+linear_trends_nor = (linear_trends - np.mean(linear_trends))/ np.std(linear_trends)
+predictors_uccle = linear_trends_nor
+
+
 predictors_uccle['enso'] = enso
 predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso']
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
@@ -284,6 +402,5 @@ predictors_uccle['solar'] = norsolar
 predictors_uccle['AOD'] = aod_nor
 
 
-predictors_uccle.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_recap.csv')
-
+predictors_uccle.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_nor_1969to1996.csv')
 

@@ -31,10 +31,10 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
     # plt.close()
     plt.close()
 
@@ -47,11 +47,11 @@ pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
-# predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
-predictors=pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+# predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+predictors=pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
 
 # try new predictors
-# predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
@@ -63,7 +63,7 @@ predictors.set_index('date', inplace=True)
 # For Brewer Mast
 predictors = predictors.loc['1971-07-01':'2018-12-01']
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
 
 
 uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
@@ -130,8 +130,8 @@ for j in range(12):
     pre_m[j] = predictors[predictors.index.month == (j+1)]
 
 
-for i in range(12):
-
+for i in range(2):
+# for i in range(12):
 
     pre_m[i] , uct[i] = pd.DataFrame.align(pre_m[i], uct[i], axis=0)
     # predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
@@ -139,6 +139,7 @@ for i in range(12):
     uY[i] = uct[i][dfstr].values
     # uX[i] = predictors.values
     uX[i] = pre_m[i].values
+    print(i, uX[i])
 
     if(i == 2):
         print('uY', len(uY[i]))
@@ -232,9 +233,9 @@ ax.set_xticklabels(ticklabels) #add monthlabels to the xaxis
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 
 #
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
-# plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.pdf')
-plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.eps')
 # plt.close()
 plt.show()

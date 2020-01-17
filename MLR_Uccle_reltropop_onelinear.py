@@ -24,77 +24,39 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
-    # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
-
     plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.pdf')
     plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.eps')
     plt.close()
 
 
 ######################################################################################################################
-
-
 # part for using extended predictors
-pre_name = 'OneLinear_prenor_RelTropop'
+pre_name = 'OneLinear_All_RelTrop'
 plname = 'Trend_' + pre_name
 tag = ''
 
 # predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
-predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_pre_nor.csv')
+predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_nor.csv')
 # #
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
-# predictors = predictors.loc['2000-01-01':'2018-12-01']
-
-# # try new predictors
-#
-# predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
-# setp = set(predictors['Unnamed: 0'].tolist())
-#
-# predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m-%d')
-# predictors.set_index('date', inplace=True)
-
-
-# For DeBilt
-# predictors = predictors.loc['1992-11-01':'2018-12-01']
-
+predictors_pre = predictors.loc['1969-01-01':'1996-12-01']
+predictors_post = predictors.loc['1997-01-01':'2018-12-01']
 
 uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
-
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
 
 print('uccle', len(uccle), list(uccle), uccle.index)
 setu = set(uccle.date.tolist())
 
-# uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
-#uccle['date'] =  dates
-# pd.to_datetime(uccle['date'], format='%Y-%m')
-# uccle.set_index('date', inplace=True)
-
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
-# uccle = uccle.loc['2000-01-01':'2018-12-01']
+uccle_pre = uccle.loc['1969-01-01':'1996-12-01']
+uccle_post = uccle.loc['1997-01-01':'2018-12-01']
 
 print('predictors', len(predictors), list(predictors))
-
-# # new predictors
-# # remove uccle missing dates:
-# print('setp.difference(setu)', setp.difference(setu))
-# print('setu.difference(setp)', setu.difference(setp))
-# removep = list(setp.difference(setu))
-# removeu = list(setu.difference(setp))
-# uccle = uccle.drop(removeu)
-# print('after uccle', len(uccle))
-# for j in range(len(removep)):
-#     removep[j] = datetime.strptime(removep[j], '%Y-%m-%d')
-# predictors = predictors.drop(removep)
-# print('after pre', len(predictors))
-
-
 
 alt = [''] * 36
 uc = {}
@@ -113,11 +75,8 @@ trend_pre = [0]*36
 trend_pre_err = [0]*36
 trend_post = [0]*36
 trend_post_err = [0]*36
-
-trend_pre_rel = [0]*36
-trend_pre_err_rel = [0]*36
-trend_post_rel = [0]*36
-trend_post_err_rel = [0]*36
+trend_all = [0]*36
+trend_all_err = [0]*36
 
 mY = []
 
@@ -135,52 +94,43 @@ print('MY', len(mY), mY)
 for i in range(24, -12, -1):
 
     print(i, mY[i], alt[i])
-    uc[i] = uccle
 
-## why these dates 1977?
-    # uct_pre[i] = uc[i].loc['1977-02-01':'1996-12-01']
-    # uct_post[i] = uc[i].loc['2000-02-01':'2017-06-01']
-    #uct[i] = uc[i].loc['1977-02-01':'2017-06-01']
-    uct[i] = uc[i]
-
+    uct[i] = uccle
     predictors, uct[i] = pd.DataFrame.align(predictors, uct[i], axis=0)
-
     uY[i] = uct[i][alt[i]].values
     uX[i] = predictors.values
-
-    # print(i, len(uX[i]), len(uY[i]) )
-
-    # mean_pre[i] = np.nanmean(uct_pre[i][alt[i]].values)
-    # mean_post[i] = np.nanmean(uct_post[i][alt[i]].values)
-
-
     regression_output[i] = mzm_regression(uX[i], uY[i])
     param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
     error_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].bse))
-
     ut[i] = uct[i].index
+    trend_all[i] = param_list[i]['linear_one'] *100
+    trend_all_err[i] = 2 * error_list[i]['linear_one'] *100
 
-    ptitle = str(alt[i])
-    pname = pre_name + tag + str(alt[i])
-    if(i == 24): print(i, len(ut[i]), len(uY[i]), len(regression_output[i]))
+ #    ## now for 1969-1997
+ #    uct[i] = uccle_pre
+ #    predictors_pre, uct[i] = pd.DataFrame.align(predictors_pre, uct[i], axis=0)
+ #    uY[i] = uct[i][alt[i]].values
+ #    uX[i] = predictors_pre.values
+ #    regression_output[i] = mzm_regression(uX[i], uY[i])
+ #    param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
+ #    error_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].bse))
+ #    ut[i] = uct[i].index
+ #    trend_pre[i] = param_list[i]['linear_one'] * 100
+ #    trend_pre_err[i] = 2 * error_list[i]['linear_one'] * 100
+ #
+ # ## now for 1997-2018
+ #    uct[i] = uccle_post
+ #    predictors_post, uct[i] = pd.DataFrame.align(predictors_post, uct[i], axis=0)
+ #    uY[i] = uct[i][alt[i]].values
+ #    uX[i] = predictors_post.values
+ #    regression_output[i] = mzm_regression(uX[i], uY[i])
+ #    param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
+ #    error_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].bse))
+ #    ut[i] = uct[i].index
+ #    trend_post[i] = param_list[i]['linear_one'] * 100
+ #    trend_post_err[i] = 2 * error_list[i]['linear_one'] * 100
+ #
 
-    #plotmlr_perkm(ut[i], uY[i], regression_output[i]['fit_values'], ptitle, pname)
-
-    # trend_pre[i] =  param_list[i]['linear_pre']
-    # trend_pre_err[i] =  error_list[i]['linear_pre']
-    # trend_post[i] =  param_list[i]['linear_post']
-    # trend_post_err[i] = error_list[i]['linear_post']
-
-    trend_pre_rel[i] = param_list[i]['linear_pre_all'] *100
-    trend_pre_err_rel[i] = 2 * error_list[i]['linear_pre_all'] *100
-    # trend_post_rel[i] = param_list[i]['linear_post'] *100
-    # trend_post_err_rel[i] = 2 * error_list[i]['linear_post'] *100
-
-    # trend_post_rel[i] = param_list[i]['pwlt_pre'] *100
-    # trend_post_err_rel[i] = 2 * error_list[i]['pwlt_pre'] *100
-
-print('uccle', trend_post_rel)
-print('uccle', trend_pre_rel)
 
 print('paramlist', param_list)
 print('errorlist', error_list)
@@ -191,7 +141,7 @@ fig, axr = plt.subplots()
 plt.title('Uccle 1969-2018')
 plt.xlabel('Ozone Trend [%/dec]')
 plt.ylabel('Altitude relative to the tropopause [km]')
-plt.xlim(-8,12)
+plt.xlim(-10,10)
 plt.ylim(-12,25)
 
 axr.axvline(x=0, color='grey', linestyle='--')
@@ -202,26 +152,18 @@ axr.yaxis.set_ticks_position('both')
 axr.xaxis.set_ticks_position('both')
 axr.yaxis.set_minor_locator(AutoMinorLocator(5))
 axr.xaxis.set_minor_locator(AutoMinorLocator(5))
-axr.set_xticks([-5,0,5,10])
+axr.set_xticks([-10,-5,0,5,10])
 
-
-
-eb1 = axr.errorbar(trend_pre_rel, mY, xerr= trend_pre_err_rel, label='pre-1997', color='red', linewidth=1,
+eb1 = axr.errorbar(trend_all, mY, xerr= trend_all_err, label='1969-2018', color='black', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb1[-1][0].set_linestyle('--')
 
-eb2 = axr.errorbar(trend_post_rel, mY, xerr= trend_post_err_rel, label='post-1997', color='limegreen', linewidth=1,
-            elinewidth=0.5, capsize=1.5, capthick=1)
-eb2[-1][0].set_linestyle('--')
 
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname
 plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
 plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
-
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')
 
 plt.show()
 plt.close()
