@@ -10,36 +10,10 @@ from datetime import datetime
 import xarray as xr
 
 
-
 '''Code to extend ilt time series to the period of Uccle'''
 
 ''' main code from : https://arg.usask.ca/docs/LOTUS_regression/dev/_modules/LOTUS_regression/predictors/download.html'''
 
-########################################################################################################
-
-def load_linear(inflection=1997):
-    """
-    Returns two piecewise linear components with a given inflection point in value / decade.
-
-    Parameters
-    ----------
-    inflection : int, Optional. Default 1997
-    """
-
-    start_year = pd.to_datetime('1969-01-01', format='%Y-%m-%d')
-    end_year = pd.to_datetime('2018-12-01', format='%Y-%m-%d')
-
-    r = relativedelta.relativedelta(end_year, start_year)
-    num_months = r.years * 12 + r.months + 1
-
-    start_year = 1969
-
-    index = pd.date_range('1975-01', periods=num_months, freq='M').to_period(freq='M')
-    pre = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t < 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
-                    name='pre')
-    post = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t > 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
-                     name='post')
-    return pd.concat([pre, post], axis=1)
 
 
 ########################################################################################################33#
@@ -171,7 +145,7 @@ def load_independent_linear_all(pre_trend_end='1997-01-01', post_trend_start='20
 
 #######################################################################################################################
 
-def load_linear(inflection=1997):
+def load_linear_pwlt(inflection=1997):
 
     """
     Returns two piecewise linear components with a given inflection point in value / decade.
@@ -180,15 +154,12 @@ def load_linear(inflection=1997):
     ----------
     inflection : int, Optional. Default 1997
     """
-
     start_year = pd.to_datetime('1969-01-01', format='%Y-%m-%d')
     end_year = pd.to_datetime('2018-12-01', format='%Y-%m-%d')
-
     r = relativedelta.relativedelta(end_year, start_year)
     num_months = r.years * 12 + r.months + 1
 
     start_year = 1969
-
     index = pd.date_range('1969-01', periods=num_months, freq='M').to_period(freq='M')
     pre = 1/120*pd.Series([t - 12 * (inflection - (start_year+1)) if t < 12 * (inflection - (start_year+1)) else 0 for t in range(num_months)], index=index,
                     name='pwlt_pre')
@@ -362,7 +333,7 @@ def load_giss_aod():
 
 # linear_trends = load_independent_linear(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
 linear_trends = load_independent_linear_all(pre_trend_end='1997-01-01', post_trend_start='2000-01-01')
-# linear_trends = load_linear(inflection=1997)
+# linear_trends = load_linear_pwlt(inflection=1997)
 # print('linear trend', list(linear_trends))
 enso = load_enso(lag_months= 0 )
 # print('enso', type(enso), list(enso))
@@ -373,8 +344,6 @@ QBO = load_qbo(pca = 2)
 aod = load_giss_aod()
 aod = aod['1969-01':'2018-12']
 aod_nor = (aod - np.mean(aod))/np.std(aod)
-
-
 
 ext_predictor = pd.DataFrame()
 
@@ -393,7 +362,6 @@ norsolar = solar.nor.tolist()
 linear_trends_nor = (linear_trends - np.mean(linear_trends))/ np.std(linear_trends)
 predictors_uccle = linear_trends_nor
 
-
 predictors_uccle['enso'] = enso
 predictors_uccle.loc['2018-12']['enso'] = predictors_uccle.loc['2018-11']['enso']
 predictors_uccle['qboA'] = (QBO.pca - QBO.pca.mean())/QBO.pca.std()
@@ -402,5 +370,5 @@ predictors_uccle['solar'] = norsolar
 predictors_uccle['AOD'] = aod_nor
 
 
-predictors_uccle.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_nor_1969to1996.csv')
+predictors_uccle.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_nor.csv')
 

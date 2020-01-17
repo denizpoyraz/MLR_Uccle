@@ -48,7 +48,8 @@ plname = 'Trend_' + pre_name
 tag = ''
 
 # predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
-predictors=pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+# predictors=pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_alltrend_nor.csv')
 
 # try new predictors
 # predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
@@ -76,13 +77,13 @@ print('setp', len(setp), setp)
 uccle.set_index('date', inplace=True)
 # uccle['dateindex'] = pd.to_datetime(uccle['dateindex'], format='%Y-%m')
 
-# only for total column ilt
-removep = list(setp.difference(setu))
-removeu = list(setu.difference(setp))
-print('removep',len(removep), removep)
-
-print('removeu',len(removeu), removeu)
-uccle = uccle.drop(removeu)
+# # only for total column ilt
+# removep = list(setp.difference(setu))
+# removeu = list(setu.difference(setp))
+# print('removep',len(removep), removep)
+#
+# print('removeu',len(removeu), removeu)
+# uccle = uccle.drop(removeu)
 
 
 uccle['monthly_mean'] = uccle['mean'] - uccle['anamoly']
@@ -130,7 +131,7 @@ for j in range(12):
     pre_m[j] = predictors[predictors.index.month == (j+1)]
 
 
-for i in range(2):
+for i in range(12):
 # for i in range(12):
 
     pre_m[i] , uct[i] = pd.DataFrame.align(pre_m[i], uct[i], axis=0)
@@ -139,7 +140,7 @@ for i in range(2):
     uY[i] = uct[i][dfstr].values
     # uX[i] = predictors.values
     uX[i] = pre_m[i].values
-    print(i, uX[i])
+    # print(i, uX[i])
 
     if(i == 2):
         print('uY', len(uY[i]))
@@ -153,14 +154,18 @@ for i in range(2):
     ptitle = str(alt[i])
     pname = pre_name + tag + mstr[i]
 
-
     # plotmlr_perkm(uct[i].dateindex, regression_output[i]['residual'], regression_output[i]['fit_values'], ptitle, pname)
-    plotmlr_perkm(uct[i].index, uY[i], regression_output[i]['fit_values'], mstr[i], pname)
+    # plotmlr_perkm(uct[i].index, uY[i], regression_output[i]['fit_values'], mstr[i], pname)
 
-    trend_pre[i] = param_list[i]['linear_pre']
-    trend_pre_err[i] = error_list[i]['linear_pre']
-    trend_post[i] = param_list[i]['linear_post']
-    trend_post_err[i] = error_list[i]['linear_post']
+    # trend_pre[i] = param_list[i]['linear_pre']
+    # trend_pre_err[i] = error_list[i]['linear_pre']
+    # trend_post[i] = param_list[i]['linear_post']
+    # trend_post_err[i] = error_list[i]['linear_post']
+
+## for one linear term
+
+    trend_pre[i] = param_list[i]['linear_one']
+    trend_pre_err[i] = error_list[i]['linear_one']
 
     # # for % in decade for relative montly anamoly
     # trend_pre[i] = trend_pre[i] * 100
@@ -174,8 +179,8 @@ for i in range(2):
     trend_post[i] = trend_post[i] * 10
     trend_post_err[i] = 2 * trend_post_err[i] * 10
 
-print('pre', trend_pre)
-print('post', trend_post)
+# print('pre', trend_pre)
+# print('post', trend_post)
 
 plt.close('all')
 
@@ -211,12 +216,16 @@ ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 
 mstr = [1,2,3,4,5,6,7,8,9,10,11,12]
 
-eb1 = ax.errorbar(mstr, trend_pre, yerr=trend_pre_err, label='pre-1997', color='red', linewidth=1,
+eb1 = ax.errorbar(mstr, trend_pre, yerr=trend_pre_err, label='1969-2018', color='black', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb1[-1][0].set_linestyle('--')
-eb2 = ax.errorbar(mstr, trend_post, yerr=trend_post_err, label='post-2000', color='limegreen', linewidth=1,
-            elinewidth=0.5, capsize=1.5, capthick=1)
-eb2[-1][0].set_linestyle('--')
+
+# eb1 = ax.errorbar(mstr, trend_pre, yerr=trend_pre_err, label='pre-1997', color='red', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb1[-1][0].set_linestyle('--')
+# eb2 = ax.errorbar(mstr, trend_post, yerr=trend_post_err, label='post-2000', color='limegreen', linewidth=1,
+#             elinewidth=0.5, capsize=1.5, capthick=1)
+# eb2[-1][0].set_linestyle('--')
 
 
 pt = pd.pivot_table(uccle, index=uccle.index.month, columns=uccle.index.year,
@@ -225,16 +234,18 @@ pt.columns = pt.columns.droplevel()
 
 ticklabels = [datetime.date(1900, item, 1).strftime('%b') for item in pt.index]
 
-ax.set_xticks(np.arange(0,12))
+print(ticklabels)
+
+ax.set_xticks(np.arange(1,13))
 ax.set_xticklabels(ticklabels) #add monthlabels to the xaxis
 
 
 
 ax.legend(loc='upper right', frameon=True, fontsize='small')
-
+plname = 'TotalColumn_OneLinearTrend'
 #
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.pdf')
-# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/Uccle' + plname + '.eps')
+plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle' + plname + '.pdf')
+plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle' + plname + '.eps')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.pdf')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/Trend_monthly_year_totalcolumnilt.eps')
 # plt.close()
