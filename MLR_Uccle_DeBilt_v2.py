@@ -248,7 +248,7 @@ eb3[-1][0].set_linestyle('--')
 eb1 = ax.errorbar(trend_postu, mY, xerr=trend_post_erru, label='Uccle 2000-2018', color='limegreen', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb1[-1][0].set_linestyle('--')
-eb2 = ax.errorbar(trend_post, mY, xerr=trend_post_err, label='DeBilt 1992-2018', color='blue', linewidth=1,
+eb2 = ax.errorbar(trend_post, mY, xerr=trend_post_err, label='DeBilt 2000-2018', color='blue', linewidth=1,
             elinewidth=0.5, capsize=1.5, capthick=1)
 eb2[-1][0].set_linestyle('--')
 

@@ -41,8 +41,8 @@ predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt_a
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
-predictors_pre = predictors.loc['1969-01-01':'1996-12-01']
-predictors_post = predictors.loc['1997-01-01':'2018-12-01']
+# predictors_pre = predictors.loc['1969-01-01':'1996-12-01']
+# predictors_post = predictors.loc['1997-01-01':'2018-12-01']
 
 uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deseas.csv')
 # uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas.csv')
