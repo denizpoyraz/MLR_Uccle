@@ -26,9 +26,9 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.pdf')
     # plt.savefig('/Volumes/HD3/KMI/MLR_Uccle/Plots/ilt_reltropop/' + plname + '.eps')
-
-    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.eps')
+    #
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Residuals/' + plname + '.eps')
     plt.close()
 
 
@@ -217,8 +217,8 @@ eb2[-1][0].set_linestyle('--')
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
 
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.pdf')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_Deseas_RelTropop_Extended/' + plname + '.eps')

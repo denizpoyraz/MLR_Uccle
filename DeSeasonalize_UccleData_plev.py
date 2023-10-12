@@ -5,7 +5,7 @@ import statistics
 import sys
 
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_plev.csv')
+uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_plev.csv')
 
 
 #uccle = pd.read_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean.csv')
@@ -70,7 +70,7 @@ for ir in range(14):  # per each km
     for i in (uct[ir][alt[ir]].index):
 
         if (pd.Timestamp(i).month == 1):
-            # print('hey',alt[ir],  i, (uct[ir][alt[ir]].loc[pd.Timestamp(i)]))
+            print('hey',alt[ir],  i, (uct[ir][alt[ir]].loc[pd.Timestamp(i)]))
             jan[ir].append(uct[ir][alt[ir]].loc[pd.Timestamp(i)])
             jan[ir] = list(filter(lambda a: a != 0, jan[ir]))
         if (pd.Timestamp(i).month == 2):
@@ -190,4 +190,4 @@ for ir2 in range(14):  # per each km
 all = pd.concat([uccle, dfde], axis=1, sort=False)
 #all.to_csv('/Volumes/HD3/KMI//MLR_Uccle/Files/1km_monthlymean_all.csv')
 
-all.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_deseas_plev.csv')
+all.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_deseas_plev.csv')

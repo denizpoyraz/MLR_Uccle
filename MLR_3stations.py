@@ -23,10 +23,10 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    # plt.savefig('/home/poyraden//MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-    # plt.savefig('/home/poyraden//MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
-    plt.savefig('/home/poyraden//MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
-    plt.savefig('/home/poyraden//MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
+    plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
     plt.close()
     plt.close()
 
@@ -38,7 +38,7 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 pre_name = 'UcDBIA'
 plname = 'Trend_' + pre_name
 tag = ''
-predictors = pd.read_csv('/home/poyraden//MLR_Uccle/Files/Extended_ilt.csv')
+predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
 predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
@@ -47,21 +47,21 @@ predictors.set_index('date', inplace=True)
 # For DeBilt
 predictors = predictors.loc['2000-01-01':'2018-10-01']
 
-uccle = pd.read_csv('/home/poyraden//MLR_Uccle/Files/1km_monthlymean_deseas_500.csv')
-#uccle = pd.read_csv('/home/poyraden//MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
+uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_deseas_500.csv')
+#uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop_deas_relative.csv')
 uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(uccle['date'], format='%Y-%m')
 uccle.set_index('date', inplace=True)
 uccle = uccle.loc['2000-01-01':'2018-10-01']
 
-#debilt = pd.read_csv('/home/poyraden//MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
-debilt = pd.read_csv('/home/poyraden//MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas_500.csv')
+#debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_reltropop_deas.csv')
+debilt = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/DeBilt_1km_monthlymean_deseas_500.csv')
 debilt.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(debilt['date'], format='%Y-%m')
 debilt.set_index('date', inplace=True)
 debilt = debilt.loc['2000-01-01':'2018-10-01']
 
-iagos = pd.read_csv('/home/poyraden//MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas_500.csv')
+iagos = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/IAGOS_1km_monthlymean_deseas_500.csv')
 iagos.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 pd.to_datetime(iagos['date'], format='%Y-%m')
 iagos.set_index('date', inplace=True)
@@ -140,6 +140,9 @@ for i in range(nkm):
 
     uY[i] = udt[i][alt[i]].values
     uX[i] = predictors.values
+
+    print('here uX', uX)
+    print('here uY', uY)
 
     regression_output[i] = mzm_regression(uX[i], uY[i])
     param_list[i] = dict(zip(list(predictors), regression_output[i]['gls_results'].params))
@@ -252,9 +255,10 @@ eb3[-1][0].set_linestyle('--')
 
 ax.legend(loc='lower left', frameon=True, fontsize='small')
 
-
-plt.savefig('/home/poyraden//MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
-plt.savefig('/home/poyraden//MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
-# plt.savefig('/home/poyraden//MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
-# plt.savefig('/home/poyraden//MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+#
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.eps')
+plt.show()
 plt.close()

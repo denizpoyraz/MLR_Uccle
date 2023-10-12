@@ -28,9 +28,9 @@ for k in range(600):
     date[k] = datetime.strptime(bd[k], '%Y%m')
     date[k] = date[k].strftime('%Y-%m-%d')
 
-df = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1kmlev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
-df_rel = pd.read_csv('/home/poyraden/MLR_Uccle/Files/1kmlev_reltropop_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
-df_pre = pd.read_csv('/home/poyraden/MLR_Uccle/Files/plev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1kmlev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df_rel = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1kmlev_reltropop_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
+df_pre = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/plev_monthlymeans.dat',  sep = "\s *", engine="python", names = date)
 
 
 alt = ['']*36
@@ -53,22 +53,22 @@ for p in range(14):
 dfT = df.T
 dfT.columns = alt
 
-dfT.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean.csv')
+dfT.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean.csv')
 
 
 dfT_rel = df_rel.T
 dfT_rel.columns = alt_rel
 
-dfT_rel.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
+dfT_rel.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_reltropop.csv')
 
 dfT_pre = df_pre.T
 dfT_pre.columns = pre
 
-dfT_pre.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean_plev.csv')
+dfT_pre.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean_plev.csv')
 
 # 500 meter resolution
 
-df5 = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Uccle_vertprofabs500ppb.txt',  sep = "\s *", engine="python")
+df5 = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Uccle_vertprofabs500ppb.txt',  sep = "\s *", engine="python")
 
 
 julian_dates = df5.columns.tolist()
@@ -106,6 +106,6 @@ for c in range(nkm):
 
 df5T.columns = columns_ds
 
-# dfT.to_csv('/home/poyraden/MLR_Uccle/Files/IAGOS_1km_monthlymean.csv')
-df5T.to_csv('/home/poyraden/MLR_Uccle/Files/1km_monthlymean500.csv')
+# dfT.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/IAGOS_1km_monthlymean.csv')
+df5T.to_csv('/home/poyraden/Analysis/MLR_Uccle/Files/1km_monthlymean500.csv')
 

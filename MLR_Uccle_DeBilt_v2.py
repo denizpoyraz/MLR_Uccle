@@ -254,8 +254,8 @@ eb2[-1][0].set_linestyle('--')
 
 ax.legend(loc='upper right', frameon=True, fontsize='small')
 #
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.pdf')
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_DeBilt' + plname + 'v2.eps')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.pdf')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_DeBilt/' + plname + '.eps')
 # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/pwlt_deseas/' + plname + '.pdf')

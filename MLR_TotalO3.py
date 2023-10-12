@@ -31,10 +31,10 @@ def plotmlr_perkm(pX, pY, pRegOutput, pltitle, plname):
 
     ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
     plt.show()
     plt.close()
     plt.close()
@@ -60,10 +60,10 @@ def plotresidual(pX, pRegOutput, pltitle, plname):
 
     # ax.legend(loc='upper right', frameon=True, fontsize='small')
 
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
-    plt.savefig('/home/poyraden/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
-    # plt.savefig('/home/poyraden/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/TotalO3/' + plname + '.eps')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.pdf')
+    # plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years/DataModel/' + plname + '.eps')
     plt.show()
     plt.close()
     plt.close()
@@ -77,16 +77,19 @@ pre_name = 'ilt'
 plname = 'Trend_' + pre_name
 tag = ''
 
-predictors = pd.read_csv('/home/poyraden/MLR_Uccle/Files/Extended_ilt.csv')
-# predictors=pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+# predictors = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/Extended_ilt.csv')
+predictors=pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalColumnPredictors_ilt.csv')
+predictors = predictors.drop(['AO', 'pre_tropop', 'temp_100', 'temp_500', 'EAWR', 'NAO'], axis = 1)
 
 # try new predictors
-# predictors= pd.read_csv('/home/poyraden/MLR_Uccle/Files/NewPredictors_ilt.csv')
+# predictors= pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/NewPredictors_ilt.csv')
 
-setp = set(predictors['Unnamed: 0'].tolist())
+l2 = predictors['Unnamed: 0'].tolist()
+
+print('l2', l2[0:5])
 
 predictors.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
+# predictors['date'] = pd.to_datetime(predictors['date'], format='%Y-%m')
 predictors.set_index('date', inplace=True)
 
 # For Brewer Mast
@@ -96,25 +99,25 @@ predictors = predictors.loc['1971-07-01':'2018-12-01']
 # predictors = add_seasonal_components(predictors, {'pre_const': 4, 'post_const':4, 'gap_cons':4})
 
 
-uccle = pd.read_csv('/home/poyraden/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
+uccle = pd.read_csv('/home/poyraden/Analysis/MLR_Uccle/Files/TotalOzone_monthlymean.csv')
 
-
-
-setu = set(uccle.date.tolist())
 
 
 
 # uccle.rename(columns={'Unnamed: 0':'date'}, inplace=True)
 #uccle['date'] =  dates
 uccle['dateindex'] = pd.to_datetime(uccle['date'], format='%Y-%m')
+print(uccle.dtypes)
+# uccle = uccle['dateindex'].resample('6M').mean()
+
 uccle.set_index('date', inplace=True)
 print('uccle', len(uccle), list(uccle))
 
-# only for total column ilt
-# removep = list(setp.difference(setu))
-# removeu = list(setu.difference(setp))
-# uccle = uccle.drop(removeu)
-# print('after uccle', len(uccle))
+l1 = uccle.index.tolist()
+
+print('l1', l1[0:5])
+
+
 
 uccle['monthly_mean'] = uccle['mean'] - uccle['anamoly']
 uccle['rel_anamoly'] = (uccle['mean'] - uccle['monthly_mean'])/ uccle['monthly_mean']
@@ -123,47 +126,52 @@ uccle['rel_anamoly'] = (uccle['mean'] - uccle['monthly_mean'])/ uccle['monthly_m
 
 print('predictors', len(predictors), list(predictors))
 
-# remove uccle missing dates:
-
-difup = setp.symmetric_difference(setu)
-diup = list(difup)
-# uccle = uccle.drop(diup)
-
-# uccle['date'] = pd.to_datetime(uccle['date'], format='%Y-%m')
-# uccle.set_index('date', inplace=True)
 
 
 print(uccle.index)
 
 
 uccle_pre = uccle.loc['1971-07-01':'1996-12-01']
-uccle_post = uccle.loc['2000-02-01':'2018-012-01']
+uccle_post = uccle.loc['2000-02-01':'2018-12-01']
 
 mean_pre = np.nanmean(uccle_pre['mean'].values)
 mean_post = np.nanmean(uccle_post['mean'].values)
 
+
+common_dates12 = list(set(l1).intersection(set(l2)))
+
+# only for total column ilt
+uccle = uccle[uccle.index.isin(common_dates12)]
+predictors = predictors[predictors.index.isin(common_dates12)]
+
+print(len(uccle), len(predictors))
 predictors, uccle = pd.DataFrame.align(predictors, uccle, axis=0)
+
+print('last predictor', predictors[0:3])
+
 
 uYra = uccle['rel_anamoly'].values
 uY = uccle['mean'].values
-
 uX = predictors.values
-
+print('uX',uX)
+print('uY', uY)
 regression_output = mzm_regression(uX, uY)
 param_list = dict(zip(list(predictors), regression_output['gls_results'].params))
 error_list = dict(zip(list(predictors), regression_output['gls_results'].bse))
 
-# plotmlr_perkm(uccle.dateindex,uY,regression_output['fit_values'],'Total O3 Monthly Means','TotalOzone_totalcolumnilt')
-# plotresidual(uccle.dateindex,regression_output['residual'],'residualmean','Residual_TotalOzone_totalcoulumnilt')
+plotmlr_perkm(uccle.dateindex,uY,regression_output['fit_values'],'Total O3 Monthly Means','TotalOzone_totalcolumnilt')
+# plotmlr_perkm(uccle.dateindex,uYra,regression_output['fit_values'],'Total O3 Monthly Means','TotalOzone_totalcolumnilt')
 
-# for relative anamoly
+plotresidual(uccle.dateindex,regression_output['residual'],'residualmean','Residual_TotalOzone_totalcoulumnilt')
 
-regression_outputra = mzm_regression(uX, uYra)
-param_listra = dict(zip(list(predictors), regression_outputra['gls_results'].params))
-error_listra = dict(zip(list(predictors), regression_outputra['gls_results'].bse))
-
-plotmlr_perkm(uccle.dateindex,uYra,regression_outputra['fit_values'],'Total O3 Relative Monthly Anamolies','Relative_ilt')
-plotresidual(uccle.dateindex,regression_outputra['residual'],'residualmean','Residual_Relative_ilt')
+# # for relative anamoly
+#
+# regression_outputra = mzm_regression(uX, uYra)
+# param_listra = dict(zip(list(predictors), regression_outputra['gls_results'].params))
+# error_listra = dict(zip(list(predictors), regression_outputra['gls_results'].bse))
+#
+# plotmlr_perkm(uccle.dateindex,uYra,regression_outputra['fit_values'],'Total O3 Relative Monthly Anamolies','Relative_ilt')
+# plotresidual(uccle.dateindex,regression_outputra['residual'],'residualmean','Residual_Relative_ilt')
 
 
 trend_pre=param_list['linear_pre']
@@ -173,12 +181,12 @@ trend_post_err=error_list['linear_post']
 
 # for ra
 
-trend_prera = param_listra['linear_pre']
-trend_pre_errra = error_listra['linear_pre']
-trend_postra = param_listra['linear_post']
-trend_post_errra = error_listra['linear_post']
+# trend_prera = param_listra['linear_pre']
+# trend_pre_errra = error_listra['linear_pre']
+# trend_postra = param_listra['linear_post']
+# trend_post_errra = error_listra['linear_post']
 
-# # for % in decade for relative montly anamoly
+# # for % in decade for relative monthly anamoly
 # trend_pre=trend_pre * 100
 # trend_pre_err=2 * trend_pre_err * 100
 # trend_post=trend_post * 100
@@ -210,13 +218,42 @@ print('monthl;y')
 print('pre', trend_pre/120)
 print('post', trend_post/120)
 
-print('decade rel anamoly')
-print('pre', trend_prera * 100)
-print('post', trend_postra * 100)
 
-print('month rel anamoly')
-print('pre', trend_prera/120)
-print('post', trend_postra/120 )
+fig, ax = plt.subplots()
+
+predictors[['linear_pre', 'linear_post']].plot(figsize=(16, 6))
+
+# plt.title('Uccle 1969-2018')
+# plt.xlabel('Ozone trend [%/dec]')
+# plt.ylabel('Altitude [km]')
+# plt.xlim(-10, 10)
+# plt.ylim(0,32)
+# ax.axvline(x=0, color='grey', linestyle='--')
+#
+# ax.tick_params(axis='both', which='both', direction='in')
+# ax.yaxis.set_ticks_position('both')
+# ax.xaxis.set_ticks_position('both')
+# # ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+# # ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+# ax.set_xticks([-10,-5,0,5,10])
+#
+#
+# eb1 = ax.errorbar(trend_pre, uccle.dateindex, xerr=trend_pre_err, label='pre-1997', color='red', linewidth=1)
+# eb1[-1][0].set_linestyle('--')
+# eb2 = ax.errorbar(trend_post, uccle.dateindex, xerr=trend_post_err, label='post-2000', color='limegreen', linewidth=1)
+# eb2[-1][0].set_linestyle('--')
+#
+# ax.legend(loc='upper right', frameon=True, fontsize='small')
+#
+# plt.show()
+
+# print('decade rel anamoly')
+# print('pre', trend_prera * 100)
+# print('post', trend_postra * 100)
+#
+# print('month rel anamoly')
+# print('pre', trend_prera/120)
+# print('post', trend_postra/120 )
 
 # didx = pd.DatetimeIndex(start ='1971-07-01', end = '2018-12-01', freq ='MS')
 #
@@ -268,20 +305,20 @@ print('post', trend_postra/120 )
 # color = 'tab:red'
 # ax.set_xlabel('time (s)')
 # ax.set_ylabel('exp', color=color)
-# # plt.plot(uccle.dateindex,regression_output['fit_values'],label='Model',color='black',linewidth=0.75)
+# plt.plot(uccle.dateindex,regression_output['fit_values'],label='Model',color='black',linewidth=0.75)
 # plt.plot(xt,regression_output['fit_values'],label='Model',color='black',linewidth=0.75)
+
+# ax.tick_params(axis='y', labelcolor=color)
 #
-# # ax.tick_params(axis='y', labelcolor=color)
-# #
-# # ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-# #
-# # color = 'tab:blue'
-# # # ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax
-# # plt.plot(x,y)
-# # # ax2.tick_params(axis='y', labelcolor=color)
-# #
-# # # fig.tight_layout()  # otherwise the right y-label is slightly clipped
+# ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 #
+# color = 'tab:blue'
+# # ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax
+# plt.plot(x,y)
+# # ax2.tick_params(axis='y', labelcolor=color)
+#
+# # fig.tight_layout()  # otherwise the right y-label is slightly clipped
+
 # pt = pd.pivot_table(uccle, index=uccle.index.year, columns=uccle.index.month,
 #                     aggfunc='sum')
 #
@@ -295,9 +332,9 @@ print('post', trend_postra/120 )
 #
 # ax.set_xticks(np.arange(0,47))
 # ax.set_xticklabels(ticklabels) #add monthlabels to the xaxis
-#
-#
-# plt.show()
+
+
+plt.show()
 #
 # # plt.plot(uccle.dateindex,regression_output['fit_values'],label='Model',color='black',linewidth=0.75)
 # # plt.plot(x,y)

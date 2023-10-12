@@ -162,8 +162,8 @@ eb1[-1][0].set_linestyle('--')
 axr.legend(loc='upper right', frameon=True, fontsize='small')
 
 plname = plname
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
-plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.pdf')
+# plt.savefig('/home/poyraden/Analysis/MLR_Uccle/Plots/Uccle_50years_2/Uccle_' + plname + '.eps')
 
 plt.show()
 plt.close()
